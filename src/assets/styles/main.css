@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-text-primary font-sans;
+  }
+
+  /* Focus styles for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+/* Custom component classes */
+@layer components {
+  /* Cards */
+  .card {
+    @apply bg-white rounded-xl p-6 shadow-card border border-gray-100;
+    @apply transition-all duration-300;
+  }
+
+  .card:hover {
+    @apply shadow-card-hover -translate-y-0.5;
+  }
+
+  /* Metric cards */
+  .stat-card {
+    @apply bg-white rounded-lg p-5 shadow-card;
+  }
+
+  .stat-label {
+    @apply text-caption uppercase tracking-wider text-text-tertiary mb-2;
+  }
+
+  .stat-value {
+    @apply text-2xl font-bold font-mono text-text-primary;
+  }
+
+  .stat-value.positive {
+    @apply text-profit;
+  }
+
+  .stat-value.negative {
+    @apply text-loss;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply bg-accent text-white font-semibold py-3 px-7 rounded-lg;
+    @apply transition-all duration-200;
+    @apply shadow-lg shadow-accent/30;
+  }
+
+  .btn-primary:hover {
+    @apply bg-accent-hover -translate-y-0.5;
+    @apply shadow-xl shadow-accent/40;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent text-accent font-semibold py-3 px-7 rounded-lg;
+    @apply border-2 border-accent;
+    @apply transition-all duration-200;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-accent-light;
+  }
+
+  /* Navigation */
+  .nav-link {
+    @apply text-body-sm font-medium text-text-secondary px-4 py-2 rounded-lg;
+    @apply transition-all duration-200;
+  }
+
+  .nav-link:hover {
+    @apply text-text-primary bg-background-tertiary;
+  }
+
+  .nav-link.active {
+    @apply text-accent;
+  }
+
+  /* Live indicator */
+  .live-indicator {
+    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full;
+    @apply bg-profit/10 text-profit text-sm font-semibold;
+  }
+
+  .live-indicator::before {
+    content: '';
+    @apply w-2 h-2 rounded-full bg-profit;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Section containers */
+  .section {
+    @apply py-20;
+  }
+
+  .section-alt {
+    @apply py-20 bg-background-secondary;
+  }
+
+  .container-narrow {
+    @apply max-w-container mx-auto px-6;
+  }
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Code blocks (for blog) */
+.code-block {
+  @apply bg-background-tertiary border border-gray-200 rounded-lg p-4;
+  @apply font-mono text-sm overflow-x-auto;
+}
+
+/* Syntax highlighting */
+.hljs-keyword { color: #0066FF; }
+.hljs-string { color: #00A344; }
+.hljs-number { color: #F59E0B; }
+.hljs-function { color: #8B5CF6; }
+.hljs-comment { color: #94A3B8; }
