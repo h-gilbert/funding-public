@@ -35,7 +35,8 @@ Thumbs.db
 # Test coverage
 coverage/
 
-# Claude Code local settings
+# Claude Code
+CLAUDE.md
 .claude/settings.local.json
 
 # Temporary files
