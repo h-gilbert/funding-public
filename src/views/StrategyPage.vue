@@ -47,7 +47,7 @@ import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
             <div class="step-number">1</div>
             <h3 class="step-title">Open Spot Long</h3>
             <p class="step-text">
-              Buy the asset on a spot exchange (e.g., MEXC). This gives direct
+              Buy the asset on a spot exchange. This gives direct
               exposure to the asset's price movement.
             </p>
           </div>
@@ -56,7 +56,7 @@ import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
             <div class="step-number">2</div>
             <h3 class="step-title">Open Futures Short</h3>
             <p class="step-text">
-              Simultaneously short the same asset on perpetual futures (e.g., KuCoin).
+              Simultaneously short the same asset on perpetual futures via exchange APIs.
               This offsets the spot position, making net exposure zero.
             </p>
           </div>
@@ -206,7 +206,7 @@ import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
           <div class="risk-card">
             <h3 class="risk-title">Exchange Risk</h3>
             <p class="risk-text">
-              Funds are held on centralized exchanges (KuCoin, MEXC). If an exchange
+              Funds are held on centralized exchanges. If an exchange
               fails, is hacked, or freezes withdrawals, capital could be lost.
             </p>
           </div>

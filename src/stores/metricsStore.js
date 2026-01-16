@@ -1,70 +1,21 @@
 import { defineStore } from 'pinia'
 import { metricsService } from '@/services/metricsService'
 
-/**
- * Transform backend summary response to frontend format
- */
-function transformSummary(data) {
-  return {
-    performance: {
-      apy30d: parseFloat(data.apy_30d) || 0,
-      apy7d: parseFloat(data.apy_7d) || 0,
-      apyAllTime: parseFloat(data.apy_all_time) || 0,
-      cumulativeReturnPct: parseFloat(data.cumulative_return_pct) || 0
-    },
-    risk: {
-      sharpeRatio30d: parseFloat(data.sharpe_ratio_30d) || 0,
-      maxDrawdownPct: parseFloat(data.max_drawdown_pct) || 0,
-      currentDrawdownPct: parseFloat(data.current_drawdown_pct) || 0,
-      volatility30d: parseFloat(data.volatility_30d) || 0
-    },
-    efficiency: {
-      winRatePct: parseFloat(data.position_win_rate) || 0,
-      capitalUtilizationPct: parseFloat(data.capital_utilization_pct) || 0,
-      fundingToFeeRatio: parseFloat(data.funding_to_fee_ratio) || 0
-    },
-    activity: {
-      openPositionsCount: data.open_positions_count || 0,
-      daysRunning: data.days_running || 0
-    },
-    lastUpdated: data.last_updated
-  }
-}
-
-/**
- * Transform backend rollups response to monthly format
- */
-function transformRollups(periods) {
-  return {
-    months: periods.map(p => ({
-      month: p.period.substring(0, 7), // "2026-01-16T00:00:00.000Z" -> "2026-01"
-      returnPct: parseFloat(p.period_pnl) / parseFloat(p.ending_balance) * 100 || 0,
-      positionsClosed: p.positions_closed || 0,
-      winRatePct: 0, // Not available in rollups
-      funding: parseFloat(p.period_funding) || 0,
-      fees: parseFloat(p.period_fees) || 0
-    }))
-  }
-}
-
 export const useMetricsStore = defineStore('metrics', {
   state: () => ({
-    // Current overview data (transformed)
+    // Current overview data from /public/stats/overview
     overview: null,
 
-    // Raw summary from backend
-    rawSummary: null,
+    // Capital metrics from /public/capital/overview
+    capital: null,
 
-    // Return sources breakdown
-    returnSources: null,
-
-    // Historical chart data
+    // Historical chart data from /public/stats/history
     history: {
-      apy_30d: [],
-      cumulative_net_pnl: []
+      apy30d: [],
+      cumulativeReturnPct: []
     },
 
-    // Monthly breakdown
+    // Monthly breakdown from /public/stats/monthly
     monthly: null,
 
     // UI state
@@ -98,7 +49,7 @@ export const useMetricsStore = defineStore('metrics', {
     },
 
     hasData: (state) => {
-      return state.rawSummary?.hasData ?? false
+      return state.overview !== null
     }
   },
 
@@ -108,64 +59,63 @@ export const useMetricsStore = defineStore('metrics', {
       this.error = null
 
       try {
-        const data = await metricsService.getSummary()
-        if (data.hasData) {
-          this.rawSummary = data
-          this.overview = transformSummary(data)
+        const response = await metricsService.getOverview()
+        if (response.success && response.data) {
+          this.overview = response.data
           this.lastUpdated = Date.now()
         } else {
-          this.error = data.message || 'No data available yet'
+          this.error = 'No data available yet'
         }
       } catch (err) {
-        console.error('[MetricsStore] Summary error:', err)
+        console.error('[MetricsStore] Overview error:', err)
         this.error = 'Failed to load metrics'
       } finally {
         this.loading = false
       }
     },
 
-    async fetchReturnSources(period = '30d') {
+    async fetchCapital() {
       try {
-        const response = await metricsService.getReturnSources(period)
-        if (response.success) {
-          this.returnSources = response.data
+        const response = await metricsService.getCapitalOverview()
+        if (response.success && response.data) {
+          this.capital = response.data
         }
       } catch (err) {
-        console.error('[MetricsStore] Return sources error:', err)
+        console.error('[MetricsStore] Capital error:', err)
       }
     },
 
-    async fetchHistory(metric = 'apy_30d', days = 30) {
+    async fetchHistory(metric = 'apy30d', days = 30, granularity = 'daily') {
       try {
-        const response = await metricsService.getChartData(metric, days)
-        if (response.data) {
-          this.history[metric] = response.data.map(d => ({
+        const response = await metricsService.getHistory(metric, days, granularity)
+        if (response.success && response.data) {
+          this.history[metric] = response.data.series.map(d => ({
             time: d.time,
             value: d.value
           }))
         }
       } catch (err) {
-        console.error('[MetricsStore] Chart data error:', err)
+        console.error('[MetricsStore] History error:', err)
       }
     },
 
     async fetchMonthly() {
       try {
-        const response = await metricsService.getRollups('monthly')
-        if (response.periods) {
-          this.monthly = transformRollups(response.periods)
+        const response = await metricsService.getMonthly()
+        if (response.success && response.data) {
+          this.monthly = response.data
         }
       } catch (err) {
-        console.error('[MetricsStore] Rollups error:', err)
+        console.error('[MetricsStore] Monthly error:', err)
       }
     },
 
     async fetchAll() {
       await Promise.all([
         this.fetchOverview(),
-        this.fetchReturnSources('30d'),
-        this.fetchHistory('apy_30d', 30),
-        this.fetchHistory('cumulative_net_pnl', 90),
+        this.fetchCapital(),
+        this.fetchHistory('apy30d', 30),
+        this.fetchHistory('cumulativeReturnPct', 90),
         this.fetchMonthly()
       ])
     },

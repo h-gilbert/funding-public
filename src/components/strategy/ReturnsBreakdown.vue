@@ -1,43 +1,31 @@
 <script setup>
-import { computed, onMounted } from 'vue'
-import { useMetricsStore } from '@/stores/metricsStore'
+import { computed } from 'vue'
+import { useMetrics } from '@/composables/useMetrics'
 
-const store = useMetricsStore()
+const { overview, loading } = useMetrics({ autoFetch: false })
 
-onMounted(() => {
-  if (!store.returnSources) {
-    store.fetchReturnSources('30d')
-  }
-})
-
+// Derive what we can from public API data
+// Note: The public API doesn't provide detailed return source breakdown
+// We show available metrics and indicate detailed breakdown is internal only
 const data = computed(() => {
-  if (!store.returnSources) {
-    return null
-  }
+  if (!overview.value) return null
+
+  const perf = overview.value.performance
+  const eff = overview.value.efficiency
+
   return {
-    funding: store.returnSources.fundingIncome?.percent || 0,
-    basis: store.returnSources.basisPnl?.percent || 0,
-    fees: store.returnSources.tradingFees?.percent || 0,
-    total: store.returnSources.netReturn?.percent || 0,
-    period: store.returnSources.period || '30d'
+    // Total return is available
+    totalReturn: perf?.cumulativeReturnPct || 0,
+    monthlyReturn: perf?.monthlyReturnPct || 0,
+    weeklyReturn: perf?.weeklyReturnPct || 0,
+    // Funding to fee ratio gives us a sense of efficiency
+    fundingToFeeRatio: eff?.fundingToFeeRatio || 0,
+    // Capital utilization
+    capitalUtilization: eff?.capitalUtilizationPct || 0
   }
 })
 
-const hasData = computed(() => data.value !== null)
-
-const maxAbsValue = computed(() => {
-  if (!data.value) return 1
-  return Math.max(
-    Math.abs(data.value.funding),
-    Math.abs(data.value.basis),
-    Math.abs(data.value.fees),
-    0.1 // minimum to avoid division by zero
-  )
-})
-
-const getBarWidth = (value) => {
-  return (Math.abs(value) / maxAbsValue.value) * 100
-}
+const hasData = computed(() => data.value !== null && !loading.value)
 
 const formatPercent = (value) => {
   if (value === null || value === undefined) return '--'
@@ -45,103 +33,23 @@ const formatPercent = (value) => {
   return `${sign}${value.toFixed(2)}%`
 }
 
-const periodLabel = computed(() => {
-  const p = data.value?.period
-  if (p === '7d') return 'Last 7 Days'
-  if (p === '30d') return 'Last 30 Days'
-  if (p === '90d') return 'Last 90 Days'
-  if (p === 'all') return 'All Time'
-  return 'Last 30 Days'
-})
+const formatRatio = (value) => {
+  if (value === null || value === undefined) return '--'
+  return `${value.toFixed(1)}x`
+}
 </script>
 
 <template>
   <div class="returns-breakdown">
     <div class="breakdown-header">
-      <span class="period-badge">{{ periodLabel }}</span>
-      <h3 class="breakdown-title">Where Returns Come From</h3>
-      <p class="breakdown-subtitle">Breakdown of strategy performance components</p>
+      <span class="period-badge">Performance Summary</span>
+      <h3 class="breakdown-title">Strategy Returns</h3>
+      <p class="breakdown-subtitle">Key performance indicators from the delta-neutral strategy</p>
     </div>
 
     <div class="breakdown-content" v-if="hasData">
-      <!-- Funding Rate Income -->
+      <!-- Total Return -->
       <div class="breakdown-row">
-        <div class="row-label">
-          <div class="row-icon funding">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 3V13M8 3L4 7M8 3L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="row-info">
-            <span class="row-name">Funding Rate Income</span>
-            <span class="row-description">Payments from perpetual futures shorts</span>
-          </div>
-        </div>
-        <div class="row-value">
-          <div class="bar-container">
-            <div
-              class="bar positive"
-              :style="{ width: getBarWidth(data.funding) + '%' }"
-            ></div>
-          </div>
-          <span class="value positive">{{ formatPercent(data.funding) }}</span>
-        </div>
-      </div>
-
-      <!-- Basis P&L -->
-      <div class="breakdown-row">
-        <div class="row-label">
-          <div class="row-icon basis">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M2 8H14M2 4H14M2 12H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="row-info">
-            <span class="row-name">Basis P&L</span>
-            <span class="row-description">Spot-futures price convergence gains</span>
-          </div>
-        </div>
-        <div class="row-value">
-          <div class="bar-container">
-            <div
-              class="bar"
-              :class="data.basis >= 0 ? 'positive' : 'negative'"
-              :style="{ width: getBarWidth(data.basis) + '%' }"
-            ></div>
-          </div>
-          <span class="value" :class="data.basis >= 0 ? 'positive' : 'negative'">{{ formatPercent(data.basis) }}</span>
-        </div>
-      </div>
-
-      <!-- Trading Fees -->
-      <div class="breakdown-row">
-        <div class="row-label">
-          <div class="row-icon fees">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 13V3M8 13L4 9M8 13L12 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="row-info">
-            <span class="row-name">Trading Fees</span>
-            <span class="row-description">Exchange fees for entry/exit trades</span>
-          </div>
-        </div>
-        <div class="row-value">
-          <div class="bar-container">
-            <div
-              class="bar negative"
-              :style="{ width: getBarWidth(data.fees) + '%' }"
-            ></div>
-          </div>
-          <span class="value negative">{{ formatPercent(data.fees) }}</span>
-        </div>
-      </div>
-
-      <!-- Divider -->
-      <div class="breakdown-divider"></div>
-
-      <!-- Total -->
-      <div class="breakdown-row total-row">
         <div class="row-label">
           <div class="row-icon total">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -151,19 +59,96 @@ const periodLabel = computed(() => {
             </svg>
           </div>
           <div class="row-info">
-            <span class="row-name">Net Return</span>
-            <span class="row-description">Total performance for period</span>
+            <span class="row-name">All-Time Return</span>
+            <span class="row-description">Cumulative strategy performance</span>
           </div>
         </div>
         <div class="row-value">
-          <span class="value total" :class="data.total >= 0 ? 'positive' : 'negative'">{{ formatPercent(data.total) }}</span>
+          <span class="value total" :class="data.totalReturn >= 0 ? 'positive' : 'negative'">{{ formatPercent(data.totalReturn) }}</span>
+        </div>
+      </div>
+
+      <!-- Monthly Return -->
+      <div class="breakdown-row">
+        <div class="row-label">
+          <div class="row-icon funding">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3V13M8 3L4 7M8 3L12 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="row-info">
+            <span class="row-name">Monthly Return</span>
+            <span class="row-description">Performance over last 30 days</span>
+          </div>
+        </div>
+        <div class="row-value">
+          <span class="value" :class="data.monthlyReturn >= 0 ? 'positive' : 'negative'">{{ formatPercent(data.monthlyReturn) }}</span>
+        </div>
+      </div>
+
+      <!-- Weekly Return -->
+      <div class="breakdown-row">
+        <div class="row-label">
+          <div class="row-icon basis">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2 8H14M2 4H14M2 12H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="row-info">
+            <span class="row-name">Weekly Return</span>
+            <span class="row-description">Performance over last 7 days</span>
+          </div>
+        </div>
+        <div class="row-value">
+          <span class="value" :class="data.weeklyReturn >= 0 ? 'positive' : 'negative'">{{ formatPercent(data.weeklyReturn) }}</span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="breakdown-divider"></div>
+
+      <!-- Funding Efficiency -->
+      <div class="breakdown-row">
+        <div class="row-label">
+          <div class="row-icon efficiency">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2L10 6H14L11 9L12 14L8 11L4 14L5 9L2 6H6L8 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="row-info">
+            <span class="row-name">Funding to Fee Ratio</span>
+            <span class="row-description">Funding income vs trading costs</span>
+          </div>
+        </div>
+        <div class="row-value">
+          <span class="value neutral">{{ formatRatio(data.fundingToFeeRatio) }}</span>
+        </div>
+      </div>
+
+      <!-- Capital Utilization -->
+      <div class="breakdown-row">
+        <div class="row-label">
+          <div class="row-icon utilization">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="6" width="3" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/>
+              <rect x="6.5" y="4" width="3" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/>
+              <rect x="11" y="2" width="3" height="12" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="row-info">
+            <span class="row-name">Capital Utilization</span>
+            <span class="row-description">Percentage of capital deployed</span>
+          </div>
+        </div>
+        <div class="row-value">
+          <span class="value neutral">{{ formatPercent(data.capitalUtilization).replace('+', '') }}</span>
         </div>
       </div>
     </div>
 
     <!-- Loading State -->
     <div class="breakdown-content loading-state" v-else>
-      <div class="breakdown-row" v-for="i in 4" :key="i">
+      <div class="breakdown-row" v-for="i in 5" :key="i">
         <div class="row-label">
           <div class="skeleton-icon"></div>
           <div class="row-info">
@@ -172,7 +157,6 @@ const periodLabel = computed(() => {
           </div>
         </div>
         <div class="row-value">
-          <div class="skeleton-bar"></div>
           <div class="skeleton-value"></div>
         </div>
       </div>
@@ -298,6 +282,16 @@ const periodLabel = computed(() => {
   color: white;
 }
 
+.row-icon.efficiency {
+  background: rgba(245, 158, 11, 0.1);
+  color: #F59E0B;
+}
+
+.row-icon.utilization {
+  background: rgba(139, 92, 246, 0.1);
+  color: #8B5CF6;
+}
+
 .row-info {
   display: flex;
   flex-direction: column;
@@ -362,6 +356,10 @@ const periodLabel = computed(() => {
 
 .value.negative {
   color: var(--color-loss);
+}
+
+.value.neutral {
+  color: var(--color-text);
 }
 
 .value.total {

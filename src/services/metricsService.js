@@ -2,60 +2,47 @@ import api from './api'
 
 export const metricsService = {
   /**
-   * Get the summary of all key metrics
-   * Maps to: GET /api/metrics/summary
+   * Get performance overview (percentages only)
+   * Maps to: GET /api/public/stats/overview
    */
-  async getSummary() {
-    return api.get('/metrics/summary')
+  async getOverview() {
+    return api.get('/public/stats/overview')
   },
 
   /**
-   * Get return source attribution breakdown
-   * Maps to: GET /api/metrics/return-sources
-   * @param {string} period - Time period: '7d', '30d', '90d', or 'all'
+   * Get capital metrics overview (percentages only)
+   * Maps to: GET /api/public/capital/overview
    */
-  async getReturnSources(period = '30d') {
-    return api.get('/metrics/return-sources', {
-      params: { period }
-    })
+  async getCapitalOverview() {
+    return api.get('/public/capital/overview')
   },
 
   /**
    * Get historical time series data for charting
-   * Maps to: GET /api/metrics/chart-data
-   * @param {string} metric - The metric name (e.g., 'apy_30d', 'cumulative_net_pnl')
-   * @param {number} days - Number of days of history
+   * Maps to: GET /api/public/stats/history
+   * @param {string} metric - Metric name: 'apy30d', 'cumulativeReturnPct', etc.
+   * @param {number} days - Number of days (1-90)
+   * @param {string} granularity - 'snapshot', 'daily', or 'weekly'
    */
-  async getChartData(metric = 'apy_30d', days = 30) {
-    return api.get('/metrics/chart-data', {
-      params: { metric, days }
+  async getHistory(metric = 'apy30d', days = 30, granularity = 'daily') {
+    return api.get('/public/stats/history', {
+      params: { metric, days, granularity }
     })
   },
 
   /**
-   * Get aggregated metrics by time period (monthly breakdown)
-   * Maps to: GET /api/metrics/rollups
-   * @param {string} granularity - 'daily', 'weekly', or 'monthly'
+   * Get month-over-month performance
+   * Maps to: GET /api/public/stats/monthly
    */
-  async getRollups(granularity = 'monthly') {
-    return api.get('/metrics/rollups', {
-      params: { granularity }
-    })
+  async getMonthly() {
+    return api.get('/public/stats/monthly')
   },
 
   /**
-   * Get the latest metrics snapshot
-   * Maps to: GET /api/metrics/latest
+   * Health check
+   * Maps to: GET /api/public/health
    */
-  async getLatest() {
-    return api.get('/metrics/latest')
-  },
-
-  /**
-   * Get performance KPIs with period comparisons
-   * Maps to: GET /api/metrics/performance
-   */
-  async getPerformance() {
-    return api.get('/metrics/performance')
+  async getHealth() {
+    return api.get('/public/health')
   }
 }
