@@ -62,13 +62,13 @@ jobs:
         env:
           SERVER_IP: ${{ secrets.SERVER_TAILSCALE_IP }}
         run: |
-          # Create nginx config for funding.hamishgilbert.com
-          ssh fred@$SERVER_IP 'cat > /tmp/funding.conf << '\''NGINX_EOF'\''
+          # Create nginx config for delta-neutral.hamishgilbert.com
+          ssh fred@$SERVER_IP 'cat > /tmp/delta-neutral.conf << '\''NGINX_EOF'\''
           # HTTP server - redirect to HTTPS
           server {
               listen 80;
               listen [::]:80;
-              server_name funding.hamishgilbert.com;
+              server_name delta-neutral.hamishgilbert.com;
 
               location ^~ /.well-known/acme-challenge/ {
                   default_type "text/plain";
@@ -87,7 +87,7 @@ jobs:
               listen 443 ssl;
               listen [::]:443 ssl;
               http2 on;
-              server_name funding.hamishgilbert.com;
+              server_name delta-neutral.hamishgilbert.com;
 
               ssl_certificate /etc/nginx/ssl/live/hamishgilbert.com/fullchain.pem;
               ssl_certificate_key /etc/nginx/ssl/live/hamishgilbert.com/privkey.pem;
@@ -131,7 +131,7 @@ jobs:
           NGINX_EOF'
 
           # Move nginx config if it doesn't exist or has changed
-          ssh fred@$SERVER_IP 'sudo cp /tmp/funding.conf /tank/appdata/multi-site-nginx/conf.d/funding.conf'
+          ssh fred@$SERVER_IP 'sudo cp /tmp/delta-neutral.conf /tank/appdata/multi-site-nginx/conf.d/delta-neutral.conf'
 
           # Check if funding-frontend service exists in docker-compose, add if not
           ssh fred@$SERVER_IP 'cd /opt/docker/webapps && \
@@ -162,4 +162,4 @@ jobs:
           # Reload nginx to pick up new config
           ssh fred@$SERVER_IP 'docker exec nginx nginx -s reload'
 
-          echo "Deployment complete! Site should be available at https://funding.hamishgilbert.com"
+          echo "Deployment complete! Site should be available at https://delta-neutral.hamishgilbert.com"
