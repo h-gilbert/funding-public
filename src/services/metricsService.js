@@ -2,35 +2,60 @@ import api from './api'
 
 export const metricsService = {
   /**
-   * Get the overview of all key metrics
+   * Get the summary of all key metrics
+   * Maps to: GET /api/metrics/summary
    */
-  async getOverview() {
-    return api.get('/public/stats/overview')
+  async getSummary() {
+    return api.get('/metrics/summary')
   },
 
   /**
-   * Get historical time series data for a specific metric
-   * @param {string} metric - The metric name (e.g., 'apy30d', 'cumulativeReturnPct')
-   * @param {number} days - Number of days of history (7, 14, 30, 60, 90)
-   * @param {string} granularity - 'snapshot', 'daily', or 'weekly'
+   * Get return source attribution breakdown
+   * Maps to: GET /api/metrics/return-sources
+   * @param {string} period - Time period: '7d', '30d', '90d', or 'all'
    */
-  async getHistory(metric = 'apy30d', days = 30, granularity = 'daily') {
-    return api.get('/public/stats/history', {
-      params: { metric, days, granularity }
+  async getReturnSources(period = '30d') {
+    return api.get('/metrics/return-sources', {
+      params: { period }
     })
   },
 
   /**
-   * Get monthly performance breakdown
+   * Get historical time series data for charting
+   * Maps to: GET /api/metrics/chart-data
+   * @param {string} metric - The metric name (e.g., 'apy_30d', 'cumulative_net_pnl')
+   * @param {number} days - Number of days of history
    */
-  async getMonthly() {
-    return api.get('/public/stats/monthly')
+  async getChartData(metric = 'apy_30d', days = 30) {
+    return api.get('/metrics/chart-data', {
+      params: { metric, days }
+    })
   },
 
   /**
-   * Health check for the API
+   * Get aggregated metrics by time period (monthly breakdown)
+   * Maps to: GET /api/metrics/rollups
+   * @param {string} granularity - 'daily', 'weekly', or 'monthly'
    */
-  async healthCheck() {
-    return api.get('/public/health')
+  async getRollups(granularity = 'monthly') {
+    return api.get('/metrics/rollups', {
+      params: { granularity }
+    })
+  },
+
+  /**
+   * Get the latest metrics snapshot
+   * Maps to: GET /api/metrics/latest
+   */
+  async getLatest() {
+    return api.get('/metrics/latest')
+  },
+
+  /**
+   * Get performance KPIs with period comparisons
+   * Maps to: GET /api/metrics/performance
+   */
+  async getPerformance() {
+    return api.get('/metrics/performance')
   }
 }

@@ -1,39 +1,69 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useMetricsStore } from '@/stores/metricsStore'
 
-// Placeholder data - will be replaced with real API data
-const placeholderData = ref({
-  funding: 12.4,
-  basis: 2.1,
-  fees: -1.8,
+const store = useMetricsStore()
+
+onMounted(() => {
+  if (!store.returnSources) {
+    store.fetchReturnSources('30d')
+  }
 })
 
-const total = computed(() => {
-  return placeholderData.value.funding + placeholderData.value.basis + placeholderData.value.fees
+const data = computed(() => {
+  if (!store.returnSources) {
+    return null
+  }
+  return {
+    funding: store.returnSources.fundingIncome?.percent || 0,
+    basis: store.returnSources.basisPnl?.percent || 0,
+    fees: store.returnSources.tradingFees?.percent || 0,
+    total: store.returnSources.netReturn?.percent || 0,
+    period: store.returnSources.period || '30d'
+  }
 })
+
+const hasData = computed(() => data.value !== null)
 
 const maxAbsValue = computed(() => {
+  if (!data.value) return 1
   return Math.max(
-    Math.abs(placeholderData.value.funding),
-    Math.abs(placeholderData.value.basis),
-    Math.abs(placeholderData.value.fees)
+    Math.abs(data.value.funding),
+    Math.abs(data.value.basis),
+    Math.abs(data.value.fees),
+    0.1 // minimum to avoid division by zero
   )
 })
 
 const getBarWidth = (value) => {
   return (Math.abs(value) / maxAbsValue.value) * 100
 }
+
+const formatPercent = (value) => {
+  if (value === null || value === undefined) return '--'
+  const sign = value >= 0 ? '+' : ''
+  return `${sign}${value.toFixed(2)}%`
+}
+
+const periodLabel = computed(() => {
+  const p = data.value?.period
+  if (p === '7d') return 'Last 7 Days'
+  if (p === '30d') return 'Last 30 Days'
+  if (p === '90d') return 'Last 90 Days'
+  if (p === 'all') return 'All Time'
+  return 'Last 30 Days'
+})
 </script>
 
 <template>
   <div class="returns-breakdown">
     <div class="breakdown-header">
-      <span class="placeholder-badge">Sample Data</span>
+      <span class="period-badge">{{ periodLabel }}</span>
       <h3 class="breakdown-title">Where Returns Come From</h3>
       <p class="breakdown-subtitle">Breakdown of strategy performance components</p>
     </div>
 
-    <div class="breakdown-content">
+    <div class="breakdown-content" v-if="hasData">
       <!-- Funding Rate Income -->
       <div class="breakdown-row">
         <div class="row-label">
@@ -51,10 +81,10 @@ const getBarWidth = (value) => {
           <div class="bar-container">
             <div
               class="bar positive"
-              :style="{ width: getBarWidth(placeholderData.funding) + '%' }"
+              :style="{ width: getBarWidth(data.funding) + '%' }"
             ></div>
           </div>
-          <span class="value positive">+{{ placeholderData.funding.toFixed(1) }}%</span>
+          <span class="value positive">{{ formatPercent(data.funding) }}</span>
         </div>
       </div>
 
@@ -74,11 +104,12 @@ const getBarWidth = (value) => {
         <div class="row-value">
           <div class="bar-container">
             <div
-              class="bar positive"
-              :style="{ width: getBarWidth(placeholderData.basis) + '%' }"
+              class="bar"
+              :class="data.basis >= 0 ? 'positive' : 'negative'"
+              :style="{ width: getBarWidth(data.basis) + '%' }"
             ></div>
           </div>
-          <span class="value positive">+{{ placeholderData.basis.toFixed(1) }}%</span>
+          <span class="value" :class="data.basis >= 0 ? 'positive' : 'negative'">{{ formatPercent(data.basis) }}</span>
         </div>
       </div>
 
@@ -99,10 +130,10 @@ const getBarWidth = (value) => {
           <div class="bar-container">
             <div
               class="bar negative"
-              :style="{ width: getBarWidth(placeholderData.fees) + '%' }"
+              :style="{ width: getBarWidth(data.fees) + '%' }"
             ></div>
           </div>
-          <span class="value negative">{{ placeholderData.fees.toFixed(1) }}%</span>
+          <span class="value negative">{{ formatPercent(data.fees) }}</span>
         </div>
       </div>
 
@@ -121,11 +152,28 @@ const getBarWidth = (value) => {
           </div>
           <div class="row-info">
             <span class="row-name">Net Return</span>
-            <span class="row-description">Total annualized performance</span>
+            <span class="row-description">Total performance for period</span>
           </div>
         </div>
         <div class="row-value">
-          <span class="value total positive">+{{ total.toFixed(1) }}%</span>
+          <span class="value total" :class="data.total >= 0 ? 'positive' : 'negative'">{{ formatPercent(data.total) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="breakdown-content loading-state" v-else>
+      <div class="breakdown-row" v-for="i in 4" :key="i">
+        <div class="row-label">
+          <div class="skeleton-icon"></div>
+          <div class="row-info">
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text small"></div>
+          </div>
+        </div>
+        <div class="row-value">
+          <div class="skeleton-bar"></div>
+          <div class="skeleton-value"></div>
         </div>
       </div>
     </div>
@@ -136,7 +184,7 @@ const getBarWidth = (value) => {
           <path d="M7 13C10.3137 13 13 10.3137 13 7C13 3.68629 10.3137 1 7 1C3.68629 1 1 3.68629 1 7C1 10.3137 3.68629 13 7 13Z" stroke="currentColor" stroke-width="1.25"/>
           <path d="M7 4.5V7.5M7 9.5H7.005" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
         </svg>
-        This breakdown shows sample data. Real metrics will be available once the backend is connected.
+        Live data from the trading strategy. Updates every 8 hours with funding periods.
       </p>
     </div>
   </div>
@@ -169,14 +217,14 @@ const getBarWidth = (value) => {
   background: var(--color-bg);
 }
 
-.placeholder-badge {
+.period-badge {
   display: inline-block;
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
-  background: rgba(148, 163, 184, 0.15);
+  color: var(--color-accent);
+  background: rgba(0, 102, 255, 0.1);
   padding: 0.25rem 0.75rem;
   border-radius: 100px;
   margin-bottom: 1rem;
@@ -304,7 +352,7 @@ const getBarWidth = (value) => {
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 0.9375rem;
   font-weight: 600;
-  min-width: 60px;
+  min-width: 70px;
   text-align: right;
 }
 
@@ -353,6 +401,58 @@ const getBarWidth = (value) => {
 
 .footer-note svg {
   flex-shrink: 0;
+}
+
+/* Loading State */
+.loading-state .breakdown-row {
+  opacity: 0.6;
+}
+
+.skeleton-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--color-bg) 25%, #e2e8f0 50%, var(--color-bg) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-text {
+  height: 14px;
+  width: 120px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--color-bg) 25%, #e2e8f0 50%, var(--color-bg) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-text.small {
+  height: 10px;
+  width: 80px;
+  margin-top: 4px;
+}
+
+.skeleton-bar {
+  width: 60px;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--color-bg) 25%, #e2e8f0 50%, var(--color-bg) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-value {
+  width: 60px;
+  height: 16px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--color-bg) 25%, #e2e8f0 50%, var(--color-bg) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 @media (max-width: 480px) {

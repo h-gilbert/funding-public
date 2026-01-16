@@ -1,39 +1,67 @@
 import { defineStore } from 'pinia'
 import { metricsService } from '@/services/metricsService'
 
-// Mock data for development when backend is unavailable
-const MOCK_OVERVIEW = {
-  performance: {
-    apy30d: 42.7,
-    apy7d: 38.2,
-    apyAllTime: 45.3,
-    cumulativeReturnPct: 12.8
-  },
-  risk: {
-    sharpeRatio30d: 2.4,
-    maxDrawdownPct: 3.2,
-    currentDrawdownPct: 0.8,
-    volatility30d: 8.5
-  },
-  efficiency: {
-    winRatePct: 87.3,
-    capitalUtilizationPct: 72.5
-  },
-  activity: {
-    openPositionsCount: 14,
-    daysRunning: 127
+/**
+ * Transform backend summary response to frontend format
+ */
+function transformSummary(data) {
+  return {
+    performance: {
+      apy30d: parseFloat(data.apy_30d) || 0,
+      apy7d: parseFloat(data.apy_7d) || 0,
+      apyAllTime: parseFloat(data.apy_all_time) || 0,
+      cumulativeReturnPct: parseFloat(data.cumulative_return_pct) || 0
+    },
+    risk: {
+      sharpeRatio30d: parseFloat(data.sharpe_ratio_30d) || 0,
+      maxDrawdownPct: parseFloat(data.max_drawdown_pct) || 0,
+      currentDrawdownPct: parseFloat(data.current_drawdown_pct) || 0,
+      volatility30d: parseFloat(data.volatility_30d) || 0
+    },
+    efficiency: {
+      winRatePct: parseFloat(data.position_win_rate) || 0,
+      capitalUtilizationPct: parseFloat(data.capital_utilization_pct) || 0,
+      fundingToFeeRatio: parseFloat(data.funding_to_fee_ratio) || 0
+    },
+    activity: {
+      openPositionsCount: data.open_positions_count || 0,
+      daysRunning: data.days_running || 0
+    },
+    lastUpdated: data.last_updated
+  }
+}
+
+/**
+ * Transform backend rollups response to monthly format
+ */
+function transformRollups(periods) {
+  return {
+    months: periods.map(p => ({
+      month: p.period.substring(0, 7), // "2026-01-16T00:00:00.000Z" -> "2026-01"
+      returnPct: parseFloat(p.period_pnl) / parseFloat(p.ending_balance) * 100 || 0,
+      positionsClosed: p.positions_closed || 0,
+      winRatePct: 0, // Not available in rollups
+      funding: parseFloat(p.period_funding) || 0,
+      fees: parseFloat(p.period_fees) || 0
+    }))
   }
 }
 
 export const useMetricsStore = defineStore('metrics', {
   state: () => ({
-    // Current overview data
+    // Current overview data (transformed)
     overview: null,
+
+    // Raw summary from backend
+    rawSummary: null,
+
+    // Return sources breakdown
+    returnSources: null,
 
     // Historical chart data
     history: {
-      apy30d: [],
-      cumulativeReturnPct: []
+      apy_30d: [],
+      cumulative_net_pnl: []
     },
 
     // Monthly breakdown
@@ -67,6 +95,10 @@ export const useMetricsStore = defineStore('metrics', {
       const apy = state.overview?.performance?.apy30d
       if (apy === null || apy === undefined) return '--'
       return `${apy >= 0 ? '+' : ''}${apy.toFixed(1)}%`
+    },
+
+    hasData: (state) => {
+      return state.rawSummary?.hasData ?? false
     }
   },
 
@@ -76,55 +108,64 @@ export const useMetricsStore = defineStore('metrics', {
       this.error = null
 
       try {
-        const response = await metricsService.getOverview()
-        if (response.success) {
-          this.overview = response.data
+        const data = await metricsService.getSummary()
+        if (data.hasData) {
+          this.rawSummary = data
+          this.overview = transformSummary(data)
           this.lastUpdated = Date.now()
         } else {
-          this.error = response.message || 'Failed to load metrics'
-          this.useMockData()
+          this.error = data.message || 'No data available yet'
         }
       } catch (err) {
-        console.warn('[MetricsStore] Backend unavailable, using mock data')
-        this.useMockData()
+        console.error('[MetricsStore] Summary error:', err)
+        this.error = 'Failed to load metrics'
       } finally {
         this.loading = false
       }
     },
 
-    useMockData() {
-      this.overview = MOCK_OVERVIEW
-      this.lastUpdated = Date.now()
-      this.error = null
-    },
-
-    async fetchHistory(metric = 'apy30d', days = 30) {
+    async fetchReturnSources(period = '30d') {
       try {
-        const response = await metricsService.getHistory(metric, days, 'daily')
+        const response = await metricsService.getReturnSources(period)
         if (response.success) {
-          this.history[metric] = response.data.series
+          this.returnSources = response.data
         }
       } catch (err) {
-        console.error('[MetricsStore] History error:', err)
+        console.error('[MetricsStore] Return sources error:', err)
+      }
+    },
+
+    async fetchHistory(metric = 'apy_30d', days = 30) {
+      try {
+        const response = await metricsService.getChartData(metric, days)
+        if (response.data) {
+          this.history[metric] = response.data.map(d => ({
+            time: d.time,
+            value: d.value
+          }))
+        }
+      } catch (err) {
+        console.error('[MetricsStore] Chart data error:', err)
       }
     },
 
     async fetchMonthly() {
       try {
-        const response = await metricsService.getMonthly()
-        if (response.success) {
-          this.monthly = response.data
+        const response = await metricsService.getRollups('monthly')
+        if (response.periods) {
+          this.monthly = transformRollups(response.periods)
         }
       } catch (err) {
-        console.error('[MetricsStore] Monthly error:', err)
+        console.error('[MetricsStore] Rollups error:', err)
       }
     },
 
     async fetchAll() {
       await Promise.all([
         this.fetchOverview(),
-        this.fetchHistory('apy30d', 30),
-        this.fetchHistory('cumulativeReturnPct', 90),
+        this.fetchReturnSources('30d'),
+        this.fetchHistory('apy_30d', 30),
+        this.fetchHistory('cumulative_net_pnl', 90),
         this.fetchMonthly()
       ])
     },
