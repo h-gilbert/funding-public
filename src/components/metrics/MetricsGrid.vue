@@ -22,7 +22,7 @@ const metrics = computed(() => {
     return [
       { label: '30-Day APY', value: performance?.apy30d, format: 'percent' },
       { label: 'Win Rate', value: efficiency?.winRatePct, format: 'percent', showSign: false },
-      { label: 'Sharpe Ratio', value: risk?.sharpeRatio30d, format: 'ratio' },
+      { label: 'Total Return', value: performance?.cumulativeReturnPct, format: 'percent' },
       { label: 'Days Running', value: activity?.daysRunning, format: 'days' }
     ]
   }
@@ -34,7 +34,6 @@ const metrics = computed(() => {
     { label: 'All-Time APY', value: performance?.apyAllTime, format: 'percent' },
     { label: 'Total Return', value: performance?.cumulativeReturnPct, format: 'percent' },
     { label: 'Win Rate', value: efficiency?.winRatePct, format: 'percent', showSign: false },
-    { label: 'Sharpe Ratio', value: risk?.sharpeRatio30d, format: 'ratio' },
     { label: 'Max Drawdown', value: risk?.maxDrawdownPct ? -Math.abs(risk.maxDrawdownPct) : null, format: 'percent' },
     { label: 'Current Drawdown', value: risk?.currentDrawdownPct ? -Math.abs(risk.currentDrawdownPct) : null, format: 'percent' },
     { label: 'Volatility (30d)', value: risk?.volatility30d, format: 'percent', showSign: false },
