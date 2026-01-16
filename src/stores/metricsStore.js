@@ -18,6 +18,9 @@ export const useMetricsStore = defineStore('metrics', {
     // Monthly breakdown from /public/stats/monthly
     monthly: null,
 
+    // Return sources breakdown from /public/stats/return-sources
+    returnSources: null,
+
     // UI state
     loading: false,
     error: null,
@@ -110,13 +113,25 @@ export const useMetricsStore = defineStore('metrics', {
       }
     },
 
+    async fetchReturnSources(period = '30d') {
+      try {
+        const response = await metricsService.getReturnSources(period)
+        if (response.success && response.data) {
+          this.returnSources = response.data
+        }
+      } catch (err) {
+        console.error('[MetricsStore] Return sources error:', err)
+      }
+    },
+
     async fetchAll() {
       await Promise.all([
         this.fetchOverview(),
         this.fetchCapital(),
         this.fetchHistory('apy30d', 30),
         this.fetchHistory('cumulativeReturnPct', 90),
-        this.fetchMonthly()
+        this.fetchMonthly(),
+        this.fetchReturnSources('30d')
       ])
     },
 

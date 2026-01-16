@@ -39,6 +39,17 @@ export const metricsService = {
   },
 
   /**
+   * Get return source attribution (percentages only)
+   * Maps to: GET /api/public/stats/return-sources
+   * @param {string} period - Time period: '7d', '30d', '90d', or 'all'
+   */
+  async getReturnSources(period = '30d') {
+    return api.get('/public/stats/return-sources', {
+      params: { period }
+    })
+  },
+
+  /**
    * Health check
    * Maps to: GET /api/public/health
    */
