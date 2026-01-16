@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { useMetricsStore } from '@/stores/metricsStore'
 import MetricsGrid from '@/components/metrics/MetricsGrid.vue'
 import LiveIndicator from '@/components/metrics/LiveIndicator.vue'
+import ReturnsBreakdown from '@/components/strategy/ReturnsBreakdown.vue'
 
 const store = useMetricsStore()
 
@@ -41,8 +42,17 @@ onMounted(() => {
       </div>
     </section>
 
-    <!-- Monthly Breakdown -->
+    <!-- Return Sources -->
     <section class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">Return Sources</h2>
+        <p class="section-subtitle">Understanding the components that make up total strategy performance</p>
+        <ReturnsBreakdown />
+      </div>
+    </section>
+
+    <!-- Monthly Breakdown -->
+    <section class="section">
       <div class="container">
         <h2 class="section-title">Monthly Returns</h2>
         <p class="section-subtitle">Month-over-month performance breakdown</p>

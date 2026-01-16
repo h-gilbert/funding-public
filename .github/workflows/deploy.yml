@@ -1,0 +1,165 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Setup Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_TAILSCALE_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        env:
+          SERVER_IP: ${{ secrets.SERVER_TAILSCALE_IP }}
+        run: |
+          # Create nginx config for funding.hamishgilbert.com
+          ssh fred@$SERVER_IP 'cat > /tmp/funding.conf << '\''NGINX_EOF'\''
+          # HTTP server - redirect to HTTPS
+          server {
+              listen 80;
+              listen [::]:80;
+              server_name funding.hamishgilbert.com;
+
+              location ^~ /.well-known/acme-challenge/ {
+                  default_type "text/plain";
+                  root /usr/share/nginx/letsencrypt-webroot;
+                  allow all;
+                  try_files $uri =404;
+              }
+
+              location / {
+                  return 301 https://$server_name$request_uri;
+              }
+          }
+
+          # HTTPS server
+          server {
+              listen 443 ssl;
+              listen [::]:443 ssl;
+              http2 on;
+              server_name funding.hamishgilbert.com;
+
+              ssl_certificate /etc/nginx/ssl/live/hamishgilbert.com/fullchain.pem;
+              ssl_certificate_key /etc/nginx/ssl/live/hamishgilbert.com/privkey.pem;
+              ssl_protocols TLSv1.2 TLSv1.3;
+              ssl_ciphers '\''ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384'\'';
+              ssl_prefer_server_ciphers off;
+
+              # Proxy API requests to trading-backend-dev container
+              location /api/ {
+                  proxy_pass http://trading-backend-dev:3400/api/;
+                  proxy_http_version 1.1;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection '\''upgrade'\'';
+                  proxy_set_header Host $host;
+                  proxy_cache_bypass $http_upgrade;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+
+              # Proxy frontend requests to frontend container
+              location / {
+                  proxy_pass http://funding-frontend:80;
+                  proxy_http_version 1.1;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+
+              gzip on;
+              gzip_vary on;
+              gzip_min_length 256;
+              gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+              add_header X-Frame-Options "SAMEORIGIN" always;
+              add_header X-Content-Type-Options "nosniff" always;
+              add_header X-XSS-Protection "1; mode=block" always;
+              add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+          }
+          NGINX_EOF'
+
+          # Move nginx config if it doesn't exist or has changed
+          ssh fred@$SERVER_IP 'sudo cp /tmp/funding.conf /tank/appdata/multi-site-nginx/conf.d/funding.conf'
+
+          # Check if funding-frontend service exists in docker-compose, add if not
+          ssh fred@$SERVER_IP 'cd /opt/docker/webapps && \
+            if ! grep -q "funding-frontend:" docker-compose.yml; then
+              echo "Adding funding-frontend service to docker-compose.yml"
+              cat >> docker-compose.yml << '\''COMPOSE_EOF'\''
+
+            funding-frontend:
+              image: ghcr.io/h-gilbert/funding-public:latest
+              container_name: funding-frontend
+              restart: unless-stopped
+              networks:
+                - proxy-network
+              healthcheck:
+                test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/health"]
+                interval: 30s
+                timeout: 3s
+                retries: 3
+                start_period: 5s
+          COMPOSE_EOF
+            fi'
+
+          # Pull latest image and restart container
+          ssh fred@$SERVER_IP 'cd /opt/docker/webapps && \
+            docker compose pull funding-frontend && \
+            docker compose up -d funding-frontend'
+
+          # Reload nginx to pick up new config
+          ssh fred@$SERVER_IP 'docker exec nginx nginx -s reload'
+
+          echo "Deployment complete! Site should be available at https://funding.hamishgilbert.com"
