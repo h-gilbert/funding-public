@@ -71,7 +71,12 @@ const periodLabel = computed(() => {
             </svg>
           </div>
           <div class="row-info">
-            <span class="row-name">Funding Rate Income</span>
+            <span class="row-name">
+              Funding Rate Income
+              <span class="info-icon" data-tooltip="Income earned from perpetual futures funding payments. When funding rates are positive, short positions receive payments from long positions.">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.25"/><path d="M7 6.5V10" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><circle cx="7" cy="4.5" r="0.75" fill="currentColor"/></svg>
+              </span>
+            </span>
             <span class="row-description">Payments from perpetual futures shorts</span>
           </div>
         </div>
@@ -95,7 +100,12 @@ const periodLabel = computed(() => {
             </svg>
           </div>
           <div class="row-info">
-            <span class="row-name">Basis P&L</span>
+            <span class="row-name">
+              Basis P&L
+              <span class="info-icon" data-tooltip="Profit or loss from the price difference between spot and futures positions as they converge at position close.">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.25"/><path d="M7 6.5V10" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><circle cx="7" cy="4.5" r="0.75" fill="currentColor"/></svg>
+              </span>
+            </span>
             <span class="row-description">Spot-futures price convergence gains</span>
           </div>
         </div>
@@ -120,7 +130,12 @@ const periodLabel = computed(() => {
             </svg>
           </div>
           <div class="row-info">
-            <span class="row-name">Trading Fees</span>
+            <span class="row-name">
+              Trading Fees
+              <span class="info-icon" data-tooltip="Fees paid to exchanges for executing spot and futures trades. Includes maker/taker fees for opening and closing positions.">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.25"/><path d="M7 6.5V10" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><circle cx="7" cy="4.5" r="0.75" fill="currentColor"/></svg>
+              </span>
+            </span>
             <span class="row-description">Exchange fees for entry/exit trades</span>
           </div>
         </div>
@@ -149,7 +164,12 @@ const periodLabel = computed(() => {
             </svg>
           </div>
           <div class="row-info">
-            <span class="row-name">Net Return</span>
+            <span class="row-name">
+              Net Return
+              <span class="info-icon" data-tooltip="Total net return after all income sources minus fees. This is the actual return realized by the strategy for this period.">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.25"/><path d="M7 6.5V10" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/><circle cx="7" cy="4.5" r="0.75" fill="currentColor"/></svg>
+              </span>
+            </span>
             <span class="row-description">Total performance for period</span>
           </div>
         </div>
@@ -317,6 +337,66 @@ const periodLabel = computed(() => {
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.info-icon {
+  color: var(--color-text-muted);
+  cursor: help;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  position: relative;
+  display: inline-flex;
+}
+
+.info-icon:hover {
+  opacity: 1;
+}
+
+.info-icon[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  background: #0F172A;
+  color: white;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  white-space: normal;
+  width: max-content;
+  max-width: 260px;
+  border-radius: 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s, visibility 0.15s;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.info-icon[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 2px);
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #0F172A;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s, visibility 0.15s;
+  z-index: 100;
+}
+
+.info-icon[data-tooltip]:hover::after,
+.info-icon[data-tooltip]:hover::before {
+  opacity: 1;
+  visibility: visible;
 }
 
 .row-description {

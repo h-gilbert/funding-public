@@ -304,14 +304,14 @@ const xTicks = [1, 3, 5, 10, 15]
           :y="chartConfig.height - 4"
           class="risk-label left"
         >
-          Lower Risk
+          Safer Margin
         </text>
         <text
           :x="chartConfig.width - chartConfig.padding.right"
           :y="chartConfig.height - 4"
           class="risk-label right"
         >
-          Higher Risk
+          Liquidation Risk
         </text>
       </g>
     </svg>

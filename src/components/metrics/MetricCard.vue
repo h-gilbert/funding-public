@@ -38,7 +38,7 @@ const formattedValue = computed(() => {
   switch (props.format) {
     case 'percent':
       const sign = props.showSign && num >= 0 ? '+' : ''
-      return `${sign}${num.toFixed(1)}%`
+      return `${sign}${num.toFixed(2)}%`
     case 'ratio':
       return num.toFixed(2)
     case 'days':
@@ -65,8 +65,17 @@ const valueClass = computed(() => {
 </script>
 
 <template>
-  <div class="stat-card" :title="tooltip">
-    <div class="stat-label">{{ label }}</div>
+  <div class="stat-card">
+    <div class="stat-label">
+      {{ label }}
+      <span v-if="tooltip" class="info-icon" :data-tooltip="tooltip">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.25"/>
+          <path d="M7 6.5V10" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+          <circle cx="7" cy="4.5" r="0.75" fill="currentColor"/>
+        </svg>
+      </span>
+    </div>
     <div v-if="loading" class="stat-value animate-pulse">
       <span class="inline-block w-16 h-8 bg-gray-200 rounded"></span>
     </div>

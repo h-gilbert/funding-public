@@ -26,7 +26,6 @@ export function useMetrics(options = {}) {
   const monthlyReturn = computed(() => store.overview?.performance?.monthlyReturnPct ?? null)
   const weeklyReturn = computed(() => store.overview?.performance?.weeklyReturnPct ?? null)
   const dailyReturn = computed(() => store.overview?.performance?.dailyReturnPct ?? null)
-  const sharpeRatio = computed(() => store.overview?.risk?.sharpeRatio30d ?? null)
   const maxDrawdown = computed(() => store.overview?.risk?.maxDrawdownPct ?? null)
   const currentDrawdown = computed(() => store.overview?.risk?.currentDrawdownPct ?? null)
   const volatility = computed(() => store.overview?.risk?.volatility30d ?? null)
@@ -74,7 +73,6 @@ export function useMetrics(options = {}) {
     dailyReturn,
 
     // Risk metrics
-    sharpeRatio,
     maxDrawdown,
     currentDrawdown,
     volatility,

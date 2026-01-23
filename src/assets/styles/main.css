@@ -42,6 +42,66 @@
 
   .stat-label {
     @apply text-caption uppercase tracking-wider text-text-tertiary mb-2;
+    @apply flex items-center gap-1.5;
+  }
+
+  .stat-label .info-icon {
+    @apply text-text-tertiary cursor-help opacity-60 transition-opacity relative;
+  }
+
+  .stat-label .info-icon:hover {
+    @apply opacity-100;
+  }
+
+  /* Instant tooltip */
+  .info-icon[data-tooltip] {
+    position: relative;
+  }
+
+  .info-icon[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    transform: translateX(-50%);
+    padding: 8px 12px;
+    background: #0F172A;
+    color: white;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    text-transform: none;
+    letter-spacing: normal;
+    white-space: normal;
+    width: max-content;
+    max-width: 260px;
+    border-radius: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s, visibility 0.15s;
+    z-index: 100;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .info-icon[data-tooltip]::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 2px);
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #0F172A;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s, visibility 0.15s;
+    z-index: 100;
+  }
+
+  .info-icon[data-tooltip]:hover::after,
+  .info-icon[data-tooltip]:hover::before {
+    opacity: 1;
+    visibility: visible;
   }
 
   .stat-value {

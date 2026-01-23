@@ -1,24 +1,7 @@
-<script setup>
-const currentYear = new Date().getFullYear()
-</script>
-
 <template>
   <footer class="bg-background-secondary border-t border-gray-100">
     <div class="container-narrow py-12">
-      <div class="grid md:grid-cols-3 gap-8">
-        <!-- Brand -->
-        <div>
-          <div class="flex items-center gap-2 mb-4">
-            <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-sm">DN</span>
-            </div>
-            <span class="font-semibold text-text-primary">Delta-Neutral</span>
-          </div>
-          <p class="text-body-sm text-text-secondary max-w-xs">
-            Automated delta-neutral funding rate strategy showcasing live performance metrics.
-          </p>
-        </div>
-
+      <div class="grid md:grid-cols-2 gap-8">
         <!-- Quick Links -->
         <div>
           <h4 class="font-semibold text-text-primary mb-4">Pages</h4>
@@ -50,16 +33,9 @@ const currentYear = new Date().getFullYear()
         <div>
           <h4 class="font-semibold text-text-primary mb-4">Disclaimer</h4>
           <p class="text-body-sm text-text-tertiary">
-            This is a personal project for educational purposes. Past performance does not guarantee future results. Trading cryptocurrencies involves significant risk.
+            A personal project exploring crypto market structure and attempting to generate alpha. Past performance does not guarantee future results. This strategy involves <router-link to="/strategy#risks" class="text-text-secondary hover:text-accent transition-colors underline">risk</router-link>.
           </p>
         </div>
-      </div>
-
-      <!-- Copyright -->
-      <div class="mt-12 pt-8 border-t border-gray-200">
-        <p class="text-body-sm text-text-tertiary text-center">
-          &copy; {{ currentYear }} Delta-Neutral Strategy. All rights reserved.
-        </p>
       </div>
     </div>
   </footer>

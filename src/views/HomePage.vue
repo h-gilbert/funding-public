@@ -73,7 +73,7 @@ onMounted(() => {
               while simultaneously going <strong>short perpetual futures</strong> on another.
             </p>
             <p class="overview-text">
-              The magic? Perpetual futures pay <strong>funding rates</strong> every 8 hours.
+              Perpetual futures pay <strong>funding rates</strong> at regular intervals (typically every 1, 4, or 8 hours).
               When funding is positive, shorts receive payments from longs. By capturing
               these payments while staying market-neutral, the strategy generates
               consistent yield regardless of price direction.
@@ -105,7 +105,7 @@ onMounted(() => {
               </div>
               <div class="visual-result">
                 <div class="result-label">Net Exposure</div>
-                <div class="result-value">Zero</div>
+                <div class="result-value">Zero (ideally)</div>
                 <div class="result-subtext">+ Funding Payments</div>
               </div>
             </div>
@@ -156,7 +156,8 @@ onMounted(() => {
 /* Hero Section */
 .hero {
   position: relative;
-  min-height: 85vh;
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -1,5 +1,6 @@
 <script setup>
 import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
+import ReturnsBreakdown from '@/components/strategy/ReturnsBreakdown.vue'
 </script>
 
 <template>
@@ -82,12 +83,23 @@ import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
       </div>
     </section>
 
-    <!-- Understanding Basis Trading -->
+    <!-- Returns Breakdown -->
     <section class="section">
       <div class="container">
-        <h2 class="section-title center">Understanding Basis Trading</h2>
+        <h2 class="section-title center">Return Sources</h2>
         <p class="section-subtitle center">
-          How the price difference between spot and futures creates additional profit opportunities
+          Live breakdown of where strategy returns come from
+        </p>
+        <ReturnsBreakdown />
+      </div>
+    </section>
+
+    <!-- Understanding Basis -->
+    <section class="section section-alt">
+      <div class="container">
+        <h2 class="section-title center">Understanding Basis</h2>
+        <p class="section-subtitle center">
+          The relationship between spot and futures prices in crypto markets
         </p>
 
         <div class="basis-explainer">
@@ -118,9 +130,10 @@ import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
               <div class="point-content">
                 <h4 class="point-title">What is Basis?</h4>
                 <p class="point-text">
-                  The basis is the price difference between a perpetual futures contract and the underlying spot asset.
-                  When futures trade above spot (positive basis), it indicates bullish sentiment — traders are willing
-                  to pay a premium for leveraged long exposure.
+                  Basis is the price difference between a perpetual futures contract and the underlying spot asset.
+                  When futures trade above spot (positive basis), it indicates bullish sentiment, as traders are willing
+                  to pay a premium for leveraged long exposure. When futures trade below spot (negative basis),
+                  the market sentiment is bearish.
                 </p>
               </div>
             </div>
@@ -129,15 +142,15 @@ import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
               <div class="point-icon profit">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                   <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M10 7V10L12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M7 10H13M10 7V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
               </div>
               <div class="point-content">
-                <h4 class="point-title">How It Generates Returns</h4>
+                <h4 class="point-title">Basis and Funding Rates</h4>
                 <p class="point-text">
-                  When we enter a delta-neutral position with positive basis, we're selling the futures at a premium.
-                  Over time, as the position is held or closed, this premium converges — we capture the difference
-                  as profit, <em>in addition to</em> the funding rate payments.
+                  Basis and funding rates are closely linked. Perpetual futures use funding payments to keep prices
+                  anchored to spot. When basis is positive, funding rates tend to be positive too, meaning longs pay shorts
+                  to incentivize price convergence. This mechanism is what delta-neutral strategies rely on.
                 </p>
               </div>
             </div>
@@ -149,11 +162,12 @@ import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
                 </svg>
               </div>
               <div class="point-content">
-                <h4 class="point-title">Basis Can Be Volatile</h4>
+                <h4 class="point-title">Basis Volatility</h4>
                 <p class="point-text">
-                  The basis fluctuates with market sentiment. During extreme volatility, basis can swing wildly
-                  in either direction, causing short-term unrealized P&L swings even though the position is delta-neutral.
-                  This is why we track basis P&L separately from funding income.
+                  Basis fluctuates with market sentiment and can swing quickly during volatile periods.
+                  Even in a delta-neutral position, basis changes cause short-term unrealized P&L movements.
+                  This is normal and expected. Tracking basis separately from funding income
+                  helps understand true strategy performance.
                 </p>
               </div>
             </div>
@@ -174,21 +188,24 @@ import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
 
         <div class="chart-explanation">
           <p>
-            With delta-neutral positions, <strong>leverage doesn't amplify directional risk</strong> —
-            it only affects how much of the funding rate you can capture relative to your capital.
+            Because positions are hedged, <strong>leverage doesn't increase your dollar-denominated risk</strong>.
+            It only affects how much of the funding rate you can capture relative to your capital.
           </p>
           <p>
-            The curve shows diminishing returns: going from 3x to 5x leverage only increases
-            capture from 75% to 83%. The <strong>sweet spot at 3-5x</strong> balances capital
-            efficiency against liquidation risk — capturing most of the yield while maintaining
-            a safe margin buffer.
+            The tradeoff is <strong>liquidation risk</strong>: higher leverage means less margin buffer,
+            so a sharp price move could liquidate the futures position before you can rebalance.
+            If that happens, you lose the ability to continue capturing funding.
+          </p>
+          <p>
+            The <strong>sweet spot at 3-5x</strong> captures most of the yield (75-83%) while maintaining
+            enough margin to survive typical volatility.
           </p>
         </div>
       </div>
     </section>
 
     <!-- Risks I AM Taking -->
-    <section class="section">
+    <section id="risks" class="section">
       <div class="container">
         <div class="risk-header">
           <div class="risk-icon danger">
@@ -423,8 +440,7 @@ import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
           <div class="scalability-note">
             <p>
               <strong>Bottom line:</strong> This strategy has a natural ceiling. It works well at modest
-              scale but returns diminish significantly as capital grows. This isn't a flaw — it's a
-              fundamental characteristic of any arbitrage-like opportunity.
+              scale but returns diminish significantly as capital grows.
             </p>
           </div>
         </div>
