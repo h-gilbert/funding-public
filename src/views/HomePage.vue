@@ -130,9 +130,6 @@ onMounted(() => {
             <router-link to="/performance" class="cta-primary">
               <span>Performance dashboard</span>
             </router-link>
-            <router-link to="/blog" class="cta-ghost">
-              <span>Read the blog</span>
-            </router-link>
           </div>
         </div>
       </div>

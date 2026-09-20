@@ -20,7 +20,6 @@ const REPLAYED_METRICS = [
   'cumulativeReturnPct',
   'capitalUtilizationPct',
   'maxDrawdownPct',
-  'winRatePct',
   'volatility30d'
 ]
 
@@ -261,7 +260,6 @@ async function composeLaggedOverview(now = Date.now()) {
         volatility30d: at.volatility30d
       },
       efficiency: {
-        winRatePct: at.winRatePct,
         capitalUtilizationPct: at.capitalUtilizationPct,
         fundingToFeeRatio: null
       },

@@ -37,7 +37,6 @@ export function useMetrics(options = {}) {
   const maxDrawdown = computed(() => store.overview?.risk?.maxDrawdownPct ?? null)
   const currentDrawdown = computed(() => store.overview?.risk?.currentDrawdownPct ?? null)
   const volatility = computed(() => store.overview?.risk?.volatility30d ?? null)
-  const winRate = computed(() => store.overview?.efficiency?.winRatePct ?? null)
   const capitalUtilization = computed(() => store.overview?.efficiency?.capitalUtilizationPct ?? null)
   const fundingToFeeRatio = computed(() => store.overview?.efficiency?.fundingToFeeRatio ?? null)
   const daysRunning = computed(() => store.overview?.activity?.daysRunning ?? null)
@@ -86,7 +85,6 @@ export function useMetrics(options = {}) {
     volatility,
 
     // Efficiency metrics
-    winRate,
     capitalUtilization,
     fundingToFeeRatio,
 

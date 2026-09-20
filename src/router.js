@@ -29,21 +29,6 @@ const routes = [
     }
   },
   {
-    path: '/blog',
-    name: 'Blog',
-    component: () => import('@/views/BlogListPage.vue'),
-    meta: {
-      title: 'Blog | Delta-Neutral Strategy',
-      description: 'Notes on building an automated trading system.'
-    }
-  },
-  {
-    path: '/blog/:slug',
-    name: 'BlogPost',
-    component: () => import('@/views/BlogPostPage.vue'),
-    props: true
-  },
-  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@/views/NotFoundPage.vue'),

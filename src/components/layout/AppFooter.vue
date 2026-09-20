@@ -21,11 +21,6 @@
                 Strategy
               </router-link>
             </li>
-            <li>
-              <router-link to="/blog" class="text-body-sm text-text-secondary hover:text-accent transition-colors">
-                Blog
-              </router-link>
-            </li>
           </ul>
         </div>
 

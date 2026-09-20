@@ -46,7 +46,7 @@ onMounted(() => {
     <section class="section" v-if="store.showsAggregates">
       <div class="container">
         <h2 class="section-title">Monthly returns</h2>
-        <p class="section-subtitle">Return, positions closed and win rate for each month</p>
+        <p class="section-subtitle">Return and positions closed for each month</p>
 
         <!-- YTD Summary -->
         <div class="ytd-card" v-if="store.monthly?.ytd">
@@ -64,10 +64,6 @@ onMounted(() => {
             <div class="ytd-stat">
               <span class="ytd-stat-value neutral">{{ store.monthly.ytd.positionsClosed || 0 }}</span>
               <span class="ytd-stat-label">Positions</span>
-            </div>
-            <div class="ytd-stat">
-              <span class="ytd-stat-value neutral">{{ store.monthly.ytd.winRatePct?.toFixed(1) || 0 }}%</span>
-              <span class="ytd-stat-label">Win Rate</span>
             </div>
           </div>
         </div>
@@ -88,7 +84,6 @@ onMounted(() => {
             </div>
             <div class="month-stats" v-if="month.positionsClosed > 0">
               <span>{{ month.positionsClosed }} positions</span>
-              <span>{{ month.winRatePct?.toFixed(0) || 0 }}% win rate</span>
             </div>
           </div>
         </div>
