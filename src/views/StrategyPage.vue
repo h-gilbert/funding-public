@@ -1,6 +1,9 @@
 <script setup>
 import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
 import ReturnsBreakdown from '@/components/strategy/ReturnsBreakdown.vue'
+import { useMetricsStore } from '@/stores/metricsStore'
+
+const store = useMetricsStore()
 </script>
 
 <template>
@@ -84,11 +87,11 @@ import ReturnsBreakdown from '@/components/strategy/ReturnsBreakdown.vue'
     </section>
 
     <!-- Returns Breakdown -->
-    <section class="section">
+    <section class="section" v-if="store.showsAggregates">
       <div class="container">
         <h2 class="section-title center">Return Sources</h2>
         <p class="section-subtitle center">
-          Live breakdown of where strategy returns come from
+          Breakdown of where strategy returns come from
         </p>
         <ReturnsBreakdown />
       </div>
@@ -498,7 +501,7 @@ import ReturnsBreakdown from '@/components/strategy/ReturnsBreakdown.vue'
     <section class="section section-alt">
       <div class="container center">
         <h2 class="section-title">Want to see the results?</h2>
-        <p class="section-subtitle">Check out the live performance dashboard</p>
+        <p class="section-subtitle">Check out the performance dashboard</p>
         <router-link to="/performance" class="cta-button">
           View Performance
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

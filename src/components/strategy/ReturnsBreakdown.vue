@@ -23,6 +23,12 @@ const data = computed(() => {
 
 const hasData = computed(() => data.value !== null)
 
+const footerNote = computed(() =>
+  store.isLagged
+    ? `Real trading data, shown as at ${store.asOfLabel} on a ${store.lagAdjective} delay.`
+    : 'Real trading data. Updates every 8 hours with funding periods.'
+)
+
 const maxAbsValue = computed(() => {
   if (!data.value) return 1
   return Math.max(
@@ -202,7 +208,7 @@ const periodLabel = computed(() => {
           <path d="M7 13C10.3137 13 13 10.3137 13 7C13 3.68629 10.3137 1 7 1C3.68629 1 1 3.68629 1 7C1 10.3137 3.68629 13 7 13Z" stroke="currentColor" stroke-width="1.25"/>
           <path d="M7 4.5V7.5M7 9.5H7.005" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
         </svg>
-        Live data from the trading strategy. Updates every 8 hours with funding periods.
+        {{ footerNote }}
       </p>
     </div>
   </div>

@@ -7,7 +7,7 @@ const routes = [
     component: () => import('@/views/HomePage.vue'),
     meta: {
       title: 'Delta-Neutral Funding Strategy',
-      description: 'Automated delta-neutral funding rate strategy with live performance metrics.'
+      description: 'Automated delta-neutral funding rate strategy with verified performance metrics.'
     }
   },
   {
@@ -16,7 +16,7 @@ const routes = [
     component: () => import('@/views/PerformancePage.vue'),
     meta: {
       title: 'Performance | Delta-Neutral Strategy',
-      description: 'Live APY, ROI, Sharpe ratio, and historical performance charts.'
+      description: 'APY, ROI, drawdown, and historical performance charts, published on a delay.'
     }
   },
   {

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useMetrics } from '@/composables/useMetrics'
 
-const { apyAllTime, loading } = useMetrics({ autoFetch: false })
+const { apyAllTime, loading, isLagged, lagAdjective, asOfLabel } = useMetrics({ autoFetch: false })
 
 const formattedApy = computed(() => {
   if (loading.value || apyAllTime.value === null) return '--'
@@ -13,6 +13,13 @@ const formattedApy = computed(() => {
 const isPositive = computed(() => {
   return apyAllTime.value !== null && apyAllTime.value >= 0
 })
+
+const tooltip = computed(() => {
+  const base = 'Annualized percentage yield since strategy inception'
+  return isLagged.value
+    ? `${base}, as at ${asOfLabel.value}. Published figures trail live trading on a ${lagAdjective.value} delay.`
+    : base
+})
 </script>
 
 <template>
@@ -22,6 +29,7 @@ const isPositive = computed(() => {
   >
     <span class="relative flex h-2 w-2">
       <span
+        v-if="!isLagged"
         class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
         :class="isPositive ? 'bg-profit' : 'bg-loss'"
       ></span>
@@ -31,7 +39,8 @@ const isPositive = computed(() => {
       ></span>
     </span>
     <span>{{ formattedApy }} APY</span>
-    <span class="info-icon" data-tooltip="Annualized percentage yield since strategy inception">
+    <span v-if="isLagged" class="as-of">as at {{ asOfLabel }}</span>
+    <span class="info-icon" :data-tooltip="tooltip">
       <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
         <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.25"/>
         <path d="M7 6.5V10" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
@@ -51,6 +60,12 @@ const isPositive = computed(() => {
   font-size: 0.875rem;
   font-weight: 700;
   font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.as-of {
+  font-weight: 500;
+  opacity: 0.75;
+  font-size: 0.75rem;
 }
 
 .info-icon {

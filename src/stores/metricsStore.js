@@ -1,15 +1,27 @@
 import { defineStore } from 'pinia'
 import { metricsService } from '@/services/metricsService'
+import {
+  LAG_DAYS,
+  isLagged,
+  canServeLaggedAggregates,
+  asOfDate,
+  formatAsOf,
+  lagLabel,
+  lagAdjective
+} from '@/config/dataLag'
+
+/** Polling faster than this is pointless when the data is days old. */
+const LAGGED_MIN_POLL_MS = 5 * 60 * 1000
 
 export const useMetricsStore = defineStore('metrics', {
   state: () => ({
-    // Current overview data from /public/stats/overview
+    // Overview as at the cutoff, from /public/stats/overview (or replayed history)
     overview: null,
 
     // Capital metrics from /public/capital/overview
     capital: null,
 
-    // Historical chart data from /public/stats/history
+    // Historical chart data from /public/stats/history, ending at the cutoff
     history: {
       apy30d: [],
       cumulativeReturnPct: []
@@ -26,11 +38,29 @@ export const useMetricsStore = defineStore('metrics', {
     error: null,
     lastUpdated: null,
 
+    // The date the published figures are reported as at
+    asOf: isLagged ? asOfDate().toISOString() : null,
+
     // Polling
     pollInterval: null
   }),
 
   getters: {
+    isLagged: () => isLagged,
+
+    lagDays: () => LAG_DAYS,
+
+    lagLabel: () => lagLabel(),
+
+    /** Adjective form, for "a 7-day delay". */
+    lagAdjective: () => lagAdjective(),
+
+    /** Human-readable cutoff date, e.g. "13 Sep 2026". */
+    asOfLabel: (state) => (state.asOf ? formatAsOf(new Date(state.asOf)) : '--'),
+
+    /** Monthly / return-source / capital figures can't be back-dated client-side. */
+    showsAggregates: () => canServeLaggedAggregates,
+
     isStale: (state) => {
       if (!state.lastUpdated) return true
       return Date.now() - state.lastUpdated > 5 * 60 * 1000 // 5 min
@@ -66,6 +96,7 @@ export const useMetricsStore = defineStore('metrics', {
         if (response.success && response.data) {
           this.overview = response.data
           this.lastUpdated = Date.now()
+          this.asOf = response.meta?.asOf ?? (isLagged ? asOfDate().toISOString() : null)
         } else {
           this.error = 'No data available yet'
         }
@@ -78,6 +109,7 @@ export const useMetricsStore = defineStore('metrics', {
     },
 
     async fetchCapital() {
+      if (!canServeLaggedAggregates) return
       try {
         const response = await metricsService.getCapitalOverview()
         if (response.success && response.data) {
@@ -103,6 +135,7 @@ export const useMetricsStore = defineStore('metrics', {
     },
 
     async fetchMonthly() {
+      if (!canServeLaggedAggregates) return
       try {
         const response = await metricsService.getMonthly()
         if (response.success && response.data) {
@@ -114,6 +147,7 @@ export const useMetricsStore = defineStore('metrics', {
     },
 
     async fetchReturnSources(period = '30d') {
+      if (!canServeLaggedAggregates) return
       try {
         const response = await metricsService.getReturnSources(period)
         if (response.success && response.data) {
@@ -137,10 +171,11 @@ export const useMetricsStore = defineStore('metrics', {
 
     startPolling(intervalMs = 60000) {
       this.stopPolling()
+      const interval = isLagged ? Math.max(intervalMs, LAGGED_MIN_POLL_MS) : intervalMs
       this.fetchOverview()
       this.pollInterval = setInterval(() => {
         this.fetchOverview()
-      }, intervalMs)
+      }, interval)
     },
 
     stopPolling() {

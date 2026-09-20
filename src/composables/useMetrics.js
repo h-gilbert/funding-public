@@ -12,6 +12,14 @@ export function useMetrics(options = {}) {
   const error = computed(() => store.error)
   const lastUpdated = computed(() => store.lastUpdated)
 
+  // Data lag: everything above is reported as at the cutoff, not as at now
+  const isLagged = computed(() => store.isLagged)
+  const lagLabel = computed(() => store.lagLabel)
+  const lagAdjective = computed(() => store.lagAdjective)
+  const asOf = computed(() => store.asOf)
+  const asOfLabel = computed(() => store.asOfLabel)
+  const showsAggregates = computed(() => store.showsAggregates)
+
   // Performance metrics
   const performance = computed(() => store.overview?.performance || null)
   const risk = computed(() => store.overview?.risk || null)
@@ -95,6 +103,14 @@ export function useMetrics(options = {}) {
     loading,
     error,
     lastUpdated,
+
+    // Data lag
+    isLagged,
+    lagLabel,
+    lagAdjective,
+    asOf,
+    asOfLabel,
+    showsAggregates,
 
     // Actions
     refresh,

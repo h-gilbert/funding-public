@@ -1,7 +1,8 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useMetricsStore } from '@/stores/metricsStore'
-import LiveIndicator from '@/components/metrics/LiveIndicator.vue'
+import DataIndicator from '@/components/metrics/DataIndicator.vue'
+import DataDelayNotice from '@/components/metrics/DataDelayNotice.vue'
 import MetricsGrid from '@/components/metrics/MetricsGrid.vue'
 
 const store = useMetricsStore()
@@ -18,7 +19,7 @@ onMounted(() => {
     <section class="hero">
       <div class="hero-content">
         <div class="hero-badge">
-          <LiveIndicator />
+          <DataIndicator />
         </div>
 
         <h1 class="hero-title">
@@ -52,11 +53,13 @@ onMounted(() => {
     <section class="metrics-section">
       <div class="section-container">
         <div class="section-header">
-          <span class="section-label">Live Metrics</span>
+          <span class="section-label">Published Metrics</span>
           <h2 class="section-title">Performance at a Glance</h2>
         </div>
 
         <MetricsGrid compact />
+
+        <DataDelayNotice class="metrics-notice" variant="inline" />
       </div>
     </section>
 
@@ -318,6 +321,10 @@ onMounted(() => {
 }
 
 /* Metrics Section */
+.metrics-notice {
+  margin-top: 1.25rem;
+}
+
 .metrics-section {
   padding: 5rem 0;
   background: var(--color-surface);

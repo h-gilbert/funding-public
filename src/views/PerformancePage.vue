@@ -2,7 +2,8 @@
 import { onMounted } from 'vue'
 import { useMetricsStore } from '@/stores/metricsStore'
 import MetricsGrid from '@/components/metrics/MetricsGrid.vue'
-import LiveIndicator from '@/components/metrics/LiveIndicator.vue'
+import DataIndicator from '@/components/metrics/DataIndicator.vue'
+import DataDelayNotice from '@/components/metrics/DataDelayNotice.vue'
 
 const store = useMetricsStore()
 
@@ -18,13 +19,14 @@ onMounted(() => {
     <section class="hero">
       <div class="container">
         <div class="hero-top">
-          <span class="label">Live Dashboard</span>
-          <LiveIndicator />
+          <span class="label">Performance Dashboard</span>
+          <DataIndicator />
         </div>
         <h1 class="title">Performance Metrics</h1>
         <p class="subtitle">
-          Real-time performance data updated every minute.
+          Performance data from real trading, published on a {{ store.lagAdjective }} delay.
         </p>
+        <DataDelayNotice class="hero-notice" />
       </div>
     </section>
 
@@ -35,13 +37,13 @@ onMounted(() => {
         <MetricsGrid />
 
         <div class="last-updated" v-if="store.lastUpdated">
-          Last updated: {{ new Date(store.lastUpdated).toLocaleTimeString() }}
+          Data as at {{ store.asOfLabel }} · fetched {{ new Date(store.lastUpdated).toLocaleTimeString() }}
         </div>
       </div>
     </section>
 
     <!-- Monthly Breakdown -->
-    <section class="section">
+    <section class="section" v-if="store.showsAggregates">
       <div class="container">
         <h2 class="section-title">Monthly Returns</h2>
         <p class="section-subtitle">Month-over-month performance breakdown</p>
@@ -107,7 +109,7 @@ onMounted(() => {
             <circle cx="8" cy="5" r="0.75" fill="currentColor"/>
           </svg>
           <p>
-            Past performance does not guarantee future results · All metrics from real trading data · Auto-refreshes every 60s
+            Past performance does not guarantee future results · All metrics from real trading data · Published on a {{ store.lagAdjective }} delay
           </p>
         </div>
       </div>
@@ -207,6 +209,10 @@ export default {
   font-size: 0.9375rem;
   color: var(--color-text-secondary);
   margin: 0 0 2rem;
+}
+
+.hero-notice {
+  margin-top: 1rem;
 }
 
 .last-updated {
