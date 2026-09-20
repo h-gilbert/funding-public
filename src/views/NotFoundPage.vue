@@ -6,15 +6,15 @@
     <div class="container">
       <div class="content">
         <div class="error-code">404</div>
-        <h1>Page Not Found</h1>
+        <h1>Page not found</h1>
         <p>
-          The page you're looking for doesn't exist or has been moved.
+          That page doesn't exist, or it moved.
         </p>
         <router-link to="/" class="cta-button">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          Back to Home
+          Back to home
         </router-link>
       </div>
     </div>

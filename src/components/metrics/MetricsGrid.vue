@@ -31,8 +31,8 @@ const metrics = computed(() => {
     maxDrawdown: 'Largest peak-to-trough decline in portfolio value',
     currentDrawdown: 'Current decline from the most recent portfolio peak',
     volatility: 'Standard deviation of daily returns over the past 30 days, annualized',
-    capitalUtilization: 'Percentage of available capital currently deployed in positions',
-    openPositions: 'Number of active trading positions currently open',
+    capitalUtilization: 'Percentage of available capital deployed in positions',
+    openPositions: 'Number of trading positions open',
     daysRunning: 'Total number of days the strategy has been active'
   }
 

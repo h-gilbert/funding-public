@@ -7,7 +7,7 @@ const routes = [
     component: () => import('@/views/HomePage.vue'),
     meta: {
       title: 'Delta-Neutral Funding Strategy',
-      description: 'Automated delta-neutral funding rate strategy with verified performance metrics.'
+      description: 'Automated delta-neutral funding rate strategy. Performance published on a 7-day delay.'
     }
   },
   {
@@ -16,7 +16,7 @@ const routes = [
     component: () => import('@/views/PerformancePage.vue'),
     meta: {
       title: 'Performance | Delta-Neutral Strategy',
-      description: 'APY, ROI, drawdown, and historical performance charts, published on a delay.'
+      description: 'APY, total return, drawdown and historical charts, published on a 7-day delay.'
     }
   },
   {
@@ -24,8 +24,8 @@ const routes = [
     name: 'Strategy',
     component: () => import('@/views/StrategyPage.vue'),
     meta: {
-      title: 'How It Works | Delta-Neutral Strategy',
-      description: 'Understanding delta-neutral funding rate arbitrage and risk mitigation.'
+      title: 'How it works | Delta-Neutral Strategy',
+      description: 'How delta-neutral funding rate capture works, and what can go wrong.'
     }
   },
   {
@@ -34,7 +34,7 @@ const routes = [
     component: () => import('@/views/BlogListPage.vue'),
     meta: {
       title: 'Blog | Delta-Neutral Strategy',
-      description: 'Technical articles on building automated trading systems.'
+      description: 'Notes on building an automated trading system.'
     }
   },
   {
@@ -48,7 +48,7 @@ const routes = [
     name: 'NotFound',
     component: () => import('@/views/NotFoundPage.vue'),
     meta: {
-      title: '404 - Page Not Found'
+      title: '404 - Page not found'
     }
   }
 ]

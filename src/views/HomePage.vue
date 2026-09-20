@@ -28,19 +28,19 @@ onMounted(() => {
         </h1>
 
         <p class="hero-subtitle">
-          Capturing funding rate yields through automated, market-neutral positions.
-          <span class="highlight">Targeting &gt;10% APY</span> without directional exposure.
+          A bot holds offsetting spot and futures positions and collects the funding paid in between.
+          <span class="highlight">Targeting &gt;10% APY</span> with no bet on price direction.
         </p>
 
         <div class="hero-cta">
           <router-link to="/performance" class="cta-primary">
-            <span>View Performance</span>
+            <span>View performance</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </router-link>
           <router-link to="/strategy" class="cta-secondary">
-            Learn How It Works
+            How it works
           </router-link>
         </div>
       </div>
@@ -54,7 +54,7 @@ onMounted(() => {
       <div class="section-container">
         <div class="section-header">
           <span class="section-label">Published Metrics</span>
-          <h2 class="section-title">Performance at a Glance</h2>
+          <h2 class="section-title">Performance so far</h2>
         </div>
 
         <MetricsGrid compact />
@@ -69,21 +69,21 @@ onMounted(() => {
         <div class="overview-grid">
           <div class="overview-content">
             <span class="section-label">The Strategy</span>
-            <h2 class="section-title">What is Delta-Neutral?</h2>
+            <h2 class="section-title">What delta-neutral means</h2>
             <p class="overview-text">
-              Delta-neutral trading eliminates directional market risk by holding
-              offsetting positions. I go <strong>long spot</strong> on one exchange
-              while simultaneously going <strong>short perpetual futures</strong> on another.
+              Delta-neutral trading cancels out price risk by holding two opposite positions.
+              I buy the asset <strong>long on spot</strong> at one exchange and sell the same size
+              <strong>short on perpetual futures</strong> at another.
             </p>
             <p class="overview-text">
-              Perpetual futures pay <strong>funding rates</strong> at regular intervals (typically every 1, 4, or 8 hours).
-              When funding is positive, shorts receive payments from longs. By capturing
-              these payments while staying market-neutral, the strategy generates
-              consistent yield regardless of price direction.
+              Perpetual futures settle <strong>funding</strong> every 1, 4 or 8 hours, depending on the venue.
+              While funding is positive, longs pay shorts. The short leg collects those payments and the
+              spot leg cancels the price risk, so what is left is the funding income. Whether the price
+              rises or falls barely matters.
             </p>
 
             <router-link to="/strategy" class="learn-more">
-              <span>Explore the full strategy</span>
+              <span>Read the full strategy</span>
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -93,23 +93,23 @@ onMounted(() => {
           <div class="overview-visual">
             <div class="visual-card">
               <div class="visual-row">
-                <div class="visual-label">Spot Position</div>
+                <div class="visual-label">Spot position</div>
                 <div class="visual-badge long">LONG</div>
               </div>
               <div class="visual-divider">
                 <span class="divider-text">+</span>
               </div>
               <div class="visual-row">
-                <div class="visual-label">Futures Position</div>
+                <div class="visual-label">Futures position</div>
                 <div class="visual-badge short">SHORT</div>
               </div>
               <div class="visual-divider">
                 <span class="divider-text">=</span>
               </div>
               <div class="visual-result">
-                <div class="result-label">Net Exposure</div>
+                <div class="result-label">Net exposure</div>
                 <div class="result-value">Zero (ideally)</div>
-                <div class="result-subtext">+ Funding Payments</div>
+                <div class="result-subtext">+ funding payments</div>
               </div>
             </div>
           </div>
@@ -121,17 +121,17 @@ onMounted(() => {
     <section class="cta-section">
       <div class="section-container">
         <div class="cta-card">
-          <h2 class="cta-title">Ready to dive deeper?</h2>
+          <h2 class="cta-title">Want the detail?</h2>
           <p class="cta-text">
-            Explore detailed performance metrics, understand the risks involved,
-            or read about the technical challenges of building this system.
+            The performance page has the numbers. The strategy page has the risks,
+            including the ones that could take the lot.
           </p>
           <div class="cta-buttons">
             <router-link to="/performance" class="cta-primary">
-              <span>Performance Dashboard</span>
+              <span>Performance dashboard</span>
             </router-link>
             <router-link to="/blog" class="cta-ghost">
-              <span>Read the Blog</span>
+              <span>Read the blog</span>
             </router-link>
           </div>
         </div>

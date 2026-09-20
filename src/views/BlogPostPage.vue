@@ -16,7 +16,7 @@ const router = useRouter()
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          Back to Blog
+          Back to blog
         </router-link>
       </div>
     </section>
@@ -24,13 +24,12 @@ const router = useRouter()
     <section class="section">
       <div class="container">
         <div class="not-found">
-          <h1>Post Not Found</h1>
+          <h1>Post not found</h1>
           <p>
-            This blog post doesn't exist yet. Check back soon for new content
-            about building automated trading systems.
+            That post doesn't exist yet.
           </p>
           <router-link to="/blog" class="cta-button">
-            View All Posts
+            View all posts
           </router-link>
         </div>
       </div>

@@ -8,10 +8,9 @@
     <section class="hero">
       <div class="container">
         <span class="label">Blog</span>
-        <h1 class="title">Technical Journal</h1>
+        <h1 class="title">Technical journal</h1>
         <p class="subtitle">
-          Articles about building automated trading systems, overcoming technical
-          challenges, and lessons learned along the way.
+          Notes on building the bot, and on the parts of it that broke first.
         </p>
       </div>
     </section>
@@ -27,13 +26,10 @@
               <path d="M16 30H26" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </div>
-          <h2>Coming Soon</h2>
+          <h2>Nothing here yet</h2>
           <p>
-            Technical articles about delta-neutral trading, rate limiting strategies,
-            multi-exchange synchronization, and more are in the works.
-          </p>
-          <p class="coming-soon-hint">
-            Check back soon or follow the project for updates.
+            I am writing up the rate limiting, the multi-exchange synchronisation,
+            and the parts of this that turned out harder than expected.
           </p>
         </div>
       </div>

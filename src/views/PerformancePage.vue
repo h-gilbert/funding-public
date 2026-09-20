@@ -22,7 +22,7 @@ onMounted(() => {
           <span class="label">Performance Dashboard</span>
           <DataIndicator />
         </div>
-        <h1 class="title">Performance Metrics</h1>
+        <h1 class="title">Performance metrics</h1>
         <p class="subtitle">
           Performance data from real trading, published on a {{ store.lagAdjective }} delay.
         </p>
@@ -33,7 +33,7 @@ onMounted(() => {
     <!-- Full Metrics Grid -->
     <section class="section">
       <div class="container">
-        <h2 class="section-title">All Metrics</h2>
+        <h2 class="section-title">All metrics</h2>
         <MetricsGrid />
 
         <div class="last-updated" v-if="store.lastUpdated">
@@ -45,13 +45,13 @@ onMounted(() => {
     <!-- Monthly Breakdown -->
     <section class="section" v-if="store.showsAggregates">
       <div class="container">
-        <h2 class="section-title">Monthly Returns</h2>
-        <p class="section-subtitle">Month-over-month performance breakdown</p>
+        <h2 class="section-title">Monthly returns</h2>
+        <p class="section-subtitle">Return, positions closed and win rate for each month</p>
 
         <!-- YTD Summary -->
         <div class="ytd-card" v-if="store.monthly?.ytd">
           <div class="ytd-header">
-            <span class="ytd-label">Year to Date</span>
+            <span class="ytd-label">Year to date</span>
             <span class="ytd-year">{{ new Date().getFullYear() }}</span>
           </div>
           <div class="ytd-stats">

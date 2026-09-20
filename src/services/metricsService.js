@@ -11,7 +11,7 @@ import {
 /**
  * The public API allows 20 requests per minute per IP, and replaying the
  * overview costs one request per metric. Only metrics the UI actually renders
- * are replayed — adding one here costs every visitor another request.
+ * are replayed. Adding one here costs every visitor another request.
  */
 const REPLAYED_METRICS = [
   'apy30d',
@@ -106,7 +106,7 @@ function persist(key, response) {
     store[key] = { at: Date.now(), response }
     sessionStorage.setItem(REQUEST_CACHE_KEY, JSON.stringify(store))
   } catch {
-    // Storage full or unavailable — the in-memory cache still applies.
+    // Storage full or unavailable. The in-memory cache still applies.
   }
 }
 

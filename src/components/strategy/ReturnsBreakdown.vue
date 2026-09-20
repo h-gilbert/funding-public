@@ -63,8 +63,8 @@ const periodLabel = computed(() => {
   <div class="returns-breakdown">
     <div class="breakdown-header">
       <span class="period-badge">{{ periodLabel }}</span>
-      <h3 class="breakdown-title">Where Returns Come From</h3>
-      <p class="breakdown-subtitle">Breakdown of strategy performance components</p>
+      <h3 class="breakdown-title">Where the returns come from</h3>
+      <p class="breakdown-subtitle">Funding income, basis moves and trading fees, split out</p>
     </div>
 
     <div class="breakdown-content" v-if="hasData">

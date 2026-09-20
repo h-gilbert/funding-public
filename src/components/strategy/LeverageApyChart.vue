@@ -121,11 +121,11 @@ const xTicks = [1, 3, 5, 10, 15]
     <div class="chart-legend">
       <span class="legend-item">
         <span class="legend-dot"></span>
-        APY Capture Rate
+        APY capture rate
       </span>
       <span class="legend-item sweet-spot-legend">
         <span class="legend-box"></span>
-        Optimal Range (3-5x)
+        Optimal range (3-5x)
       </span>
     </div>
 
@@ -304,14 +304,14 @@ const xTicks = [1, 3, 5, 10, 15]
           :y="chartConfig.height - 4"
           class="risk-label left"
         >
-          Safer Margin
+          Safer margin
         </text>
         <text
           :x="chartConfig.width - chartConfig.padding.right"
           :y="chartConfig.height - 4"
           class="risk-label right"
         >
-          Liquidation Risk
+          Liquidation risk
         </text>
       </g>
     </svg>

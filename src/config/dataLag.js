@@ -5,7 +5,7 @@
  * the site is the value as it stood LAG_DAYS ago. Recent exchange data is not
  * settled enough to publish, so it is withheld until it ages past the cutoff.
  *
- * Nothing here invents or shifts a number — it only withholds. A metric that
+ * Nothing here invents or shifts a number. It only withholds. A metric that
  * cannot be resolved as at the cutoff is reported as unavailable rather than
  * backfilled with a fresher value.
  */
@@ -22,7 +22,7 @@ export const isLagged = LAG_DAYS > 0
 /**
  * Set VITE_API_SUPPORTS_ASOF=true once the backend honours `?asOf=<ISO>` on the
  * public endpoints. Until then the lag is applied client-side, which only works
- * for metrics the history endpoint can replay — see metricsService.
+ * for metrics the history endpoint can replay. See metricsService.
  */
 export const backendSupportsAsOf = String(import.meta.env.VITE_API_SUPPORTS_ASOF) === 'true'
 

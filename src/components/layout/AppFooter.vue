@@ -33,7 +33,7 @@
         <div>
           <h4 class="font-semibold text-text-primary mb-4">Disclaimer</h4>
           <p class="text-body-sm text-text-tertiary">
-            A personal project exploring crypto market structure and attempting to generate alpha. Past performance does not guarantee future results. This strategy involves <router-link to="/strategy#risks" class="text-text-secondary hover:text-accent transition-colors underline">risk</router-link>.
+            A personal project trading crypto funding rates. Past performance does not guarantee future results. This strategy involves <router-link to="/strategy#risks" class="text-text-secondary hover:text-accent transition-colors underline">risk</router-link>.
           </p>
         </div>
       </div>

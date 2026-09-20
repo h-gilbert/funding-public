@@ -12,10 +12,9 @@ const store = useMetricsStore()
     <section class="hero">
       <div class="container">
         <span class="label">The Strategy</span>
-        <h1 class="title">How Delta-Neutral Works</h1>
+        <h1 class="title">How delta-neutral works</h1>
         <p class="subtitle">
-          Understanding the mechanics, the target returns, and the risks involved
-          in automated funding rate capture.
+          How the positions work, what they pay, and what can go wrong.
         </p>
       </div>
     </section>
@@ -29,10 +28,10 @@ const store = useMetricsStore()
               <path d="M16 4L20 12L28 13.5L22 19.5L23.5 28L16 24L8.5 28L10 19.5L4 13.5L12 12L16 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
-          <h2 class="highlight-title">Target: &gt;10% Annual Returns</h2>
+          <h2 class="highlight-title">Target: over 10% a year</h2>
           <p class="highlight-text">
-            Returns are generated through consistent funding rate payments, not market speculation.
-            Performance varies based on market conditions and funding rate availability across exchanges.
+            The returns come from funding payments, not from guessing where the price goes. How much is
+            on offer depends on the market and on which exchanges are paying at the time.
           </p>
         </div>
       </div>
@@ -41,45 +40,44 @@ const store = useMetricsStore()
     <!-- How It Works -->
     <section class="section section-alt">
       <div class="container">
-        <h2 class="section-title">The Mechanics</h2>
+        <h2 class="section-title">The mechanics</h2>
         <p class="section-subtitle">
-          A delta-neutral position eliminates directional risk while capturing yield
+          Two opposite positions cancel the price risk. The funding payments are what is left
         </p>
 
         <div class="steps-grid">
           <div class="step-card">
             <div class="step-number">1</div>
-            <h3 class="step-title">Open Spot Long</h3>
+            <h3 class="step-title">Open spot long</h3>
             <p class="step-text">
-              Buy the asset on a spot exchange. This gives direct
-              exposure to the asset's price movement.
+              Buy the asset outright on a spot exchange. That leg moves with the price.
             </p>
           </div>
 
           <div class="step-card">
             <div class="step-number">2</div>
-            <h3 class="step-title">Open Futures Short</h3>
+            <h3 class="step-title">Open futures short</h3>
             <p class="step-text">
-              Simultaneously short the same asset on perpetual futures via exchange APIs.
-              This offsets the spot position, making net exposure zero.
+              Short the same size on perpetual futures through the exchange API.
+              The two legs cancel, so net exposure is zero.
             </p>
           </div>
 
           <div class="step-card">
             <div class="step-number">3</div>
-            <h3 class="step-title">Collect Funding</h3>
+            <h3 class="step-title">Collect funding</h3>
             <p class="step-text">
-              Every 8 hours, funding payments are exchanged between longs and shorts.
-              When funding is positive, shorts receive payments automatically.
+              Longs and shorts settle funding every 8 hours on most venues.
+              While funding is positive, the short leg gets paid.
             </p>
           </div>
 
           <div class="step-card">
             <div class="step-number">4</div>
-            <h3 class="step-title">Exit When Optimal</h3>
+            <h3 class="step-title">Exit when it stops paying</h3>
             <p class="step-text">
-              Close both positions when funding rates turn unfavorable or when
-              a better opportunity emerges elsewhere.
+              Close both legs when funding turns against the position,
+              or when another pair pays better.
             </p>
           </div>
         </div>
@@ -89,9 +87,9 @@ const store = useMetricsStore()
     <!-- Returns Breakdown -->
     <section class="section" v-if="store.showsAggregates">
       <div class="container">
-        <h2 class="section-title center">Return Sources</h2>
+        <h2 class="section-title center">Return sources</h2>
         <p class="section-subtitle center">
-          Breakdown of where strategy returns come from
+          Funding income, basis moves and fees, split out
         </p>
         <ReturnsBreakdown />
       </div>
@@ -100,9 +98,9 @@ const store = useMetricsStore()
     <!-- Understanding Basis -->
     <section class="section section-alt">
       <div class="container">
-        <h2 class="section-title center">Understanding Basis</h2>
+        <h2 class="section-title center">Understanding basis</h2>
         <p class="section-subtitle center">
-          The relationship between spot and futures prices in crypto markets
+          How spot and futures prices sit against each other in crypto markets
         </p>
 
         <div class="basis-explainer">
@@ -131,12 +129,11 @@ const store = useMetricsStore()
                 </svg>
               </div>
               <div class="point-content">
-                <h4 class="point-title">What is Basis?</h4>
+                <h4 class="point-title">What basis is</h4>
                 <p class="point-text">
-                  Basis is the price difference between a perpetual futures contract and the underlying spot asset.
-                  When futures trade above spot (positive basis), it indicates bullish sentiment, as traders are willing
-                  to pay a premium for leveraged long exposure. When futures trade below spot (negative basis),
-                  the market sentiment is bearish.
+Basis is the gap between the perpetual futures price and the spot price. Futures above spot means
+traders are paying up for leveraged longs. Futures below spot means the pressure is on the other
+side.
                 </p>
               </div>
             </div>
@@ -149,11 +146,11 @@ const store = useMetricsStore()
                 </svg>
               </div>
               <div class="point-content">
-                <h4 class="point-title">Basis and Funding Rates</h4>
+                <h4 class="point-title">Basis and funding rates</h4>
                 <p class="point-text">
-                  Basis and funding rates are closely linked. Perpetual futures use funding payments to keep prices
-                  anchored to spot. When basis is positive, funding rates tend to be positive too, meaning longs pay shorts
-                  to incentivize price convergence. This mechanism is what delta-neutral strategies rely on.
+The two move together. Funding is the mechanism that drags the perpetual price back towards spot, so
+a positive basis usually means positive funding, with longs paying shorts. That payment is the whole
+business model here.
                 </p>
               </div>
             </div>
@@ -165,12 +162,11 @@ const store = useMetricsStore()
                 </svg>
               </div>
               <div class="point-content">
-                <h4 class="point-title">Basis Volatility</h4>
+                <h4 class="point-title">Basis volatility</h4>
                 <p class="point-text">
-                  Basis fluctuates with market sentiment and can swing quickly during volatile periods.
-                  Even in a delta-neutral position, basis changes cause short-term unrealized P&L movements.
-                  This is normal and expected. Tracking basis separately from funding income
-                  helps understand true strategy performance.
+                  Basis moves with sentiment and can swing hard in a fast market. Even with both legs on,
+                  that shows up as unrealised P&L bouncing around. It is noise. I track basis apart from
+                  funding income so the funding number is not buried in it.
                 </p>
               </div>
             </div>
@@ -182,26 +178,26 @@ const store = useMetricsStore()
     <!-- Leverage & Capital Efficiency -->
     <section class="section section-alt">
       <div class="container">
-        <h2 class="section-title center">Leverage & Capital Efficiency</h2>
+<h2 class="section-title center">Leverage and capital efficiency</h2>
         <p class="section-subtitle center">
-          How leverage affects funding rate capture without increasing directional risk
+          More leverage captures more funding per dollar of capital. It adds no price risk
         </p>
 
         <LeverageApyChart :base-apy="10" />
 
         <div class="chart-explanation">
           <p>
-            Because positions are hedged, <strong>leverage doesn't increase your dollar-denominated risk</strong>.
-            It only affects how much of the funding rate you can capture relative to your capital.
+Because the legs are hedged, <strong>leverage doesn't increase your dollar risk</strong>. It changes
+how much funding you capture per dollar of capital.
           </p>
           <p>
-            The tradeoff is <strong>liquidation risk</strong>: higher leverage means less margin buffer,
-            so a sharp price move could liquidate the futures position before you can rebalance.
-            If that happens, you lose the ability to continue capturing funding.
+The cost is <strong>liquidation risk</strong>. Less margin buffer means a sharp move can take out
+the futures leg before a rebalance lands. You are then long spot, unhedged, and no longer collecting
+anything.
           </p>
           <p>
-            The <strong>sweet spot at 3-5x</strong> captures most of the yield (75-83%) while maintaining
-            enough margin to survive typical volatility.
+<strong>3-5x</strong> captures 75-83% of the yield and still leaves enough margin to sit through
+normal volatility.
           </p>
         </div>
       </div>
@@ -217,73 +213,71 @@ const store = useMetricsStore()
             </svg>
           </div>
           <div>
-            <h2 class="section-title">Risks I AM Taking</h2>
-            <p class="section-subtitle">These are real risks inherent to this strategy</p>
+            <h2 class="section-title">Risks I am taking</h2>
+            <p class="section-subtitle">Every one of these can cost real money</p>
           </div>
         </div>
 
         <div class="risk-grid">
           <div class="risk-card">
-            <h3 class="risk-title">Exchange Risk</h3>
+            <h3 class="risk-title">Exchange risk</h3>
             <p class="risk-text">
-              Funds are held on centralized exchanges. If an exchange
-              fails, is hacked, or freezes withdrawals, capital could be lost.
+The money sits on centralised exchanges. If one fails, gets hacked or halts withdrawals, that
+capital is gone or stuck.
             </p>
           </div>
 
           <div class="risk-card">
-            <h3 class="risk-title">Execution Risk</h3>
+            <h3 class="risk-title">Execution risk</h3>
             <p class="risk-text">
-              Slippage during entry/exit, failed orders, and API downtime can all
-              impact position execution and profitability.
+Slippage on entry and exit, rejected orders and API outages all cost money, and can leave one leg on
+without the other.
             </p>
           </div>
 
           <div class="risk-card">
-            <h3 class="risk-title">Funding Rate Risk</h3>
+            <h3 class="risk-title">Funding rate risk</h3>
             <p class="risk-text">
-              Funding rates can turn negative, meaning shorts pay longs. Extended
-              periods of negative funding eat into profits.
+Funding can flip negative, which means the short leg pays instead of collecting. A long stretch of
+that eats the returns.
             </p>
           </div>
 
           <div class="risk-card">
-            <h3 class="risk-title">Liquidation Risk</h3>
+            <h3 class="risk-title">Liquidation risk</h3>
             <p class="risk-text">
-              Extreme volatility could liquidate the futures position before
-              rebalancing can occur, causing asymmetric losses.
+A violent move can liquidate the futures leg before a rebalance lands. The hedge disappears and the
+loss runs one way.
             </p>
           </div>
 
           <div class="risk-card">
-            <h3 class="risk-title">Technical Risk</h3>
+            <h3 class="risk-title">Technical risk</h3>
             <p class="risk-text">
-              Bugs in the bot logic, rate limiting issues, synchronization failures,
-              and unexpected API changes can cause problems.
+Bugs in the bot, rate limits, legs that fall out of sync, and exchanges changing their API without
+warning. Any of these can leave a position wrong.
             </p>
           </div>
 
           <div class="risk-card">
-            <h3 class="risk-title">Counterparty Risk</h3>
+            <h3 class="risk-title">Counterparty risk</h3>
             <p class="risk-text">
-              Exchanges may change fees, margin requirements, or delist assets
-              without adequate warning, affecting positions.
+Exchanges change fees and margin requirements, and sometimes delist a pair, with little notice.
             </p>
           </div>
 
           <div class="risk-card">
-            <h3 class="risk-title">Basis Risk</h3>
+            <h3 class="risk-title">Basis risk</h3>
             <p class="risk-text">
-              Spot and futures prices can temporarily diverge significantly,
-              causing unrealized P&L volatility even if funding is positive.
+              Spot and futures can pull apart for a while. The unrealised P&L swings
+              even while funding is still paying.
             </p>
           </div>
 
           <div class="risk-card">
-            <h3 class="risk-title">Operational Risk</h3>
+            <h3 class="risk-title">Operational risk</h3>
             <p class="risk-text">
-              Server downtime, network issues, and situations requiring manual
-              intervention can impact the strategy's performance.
+Servers go down, networks drop, and some situations need me to step in by hand.
             </p>
           </div>
         </div>
@@ -300,8 +294,8 @@ const store = useMetricsStore()
             </svg>
           </div>
           <div>
-            <h2 class="section-title">Risks I'm NOT Taking</h2>
-            <p class="section-subtitle">Compared to directional trading, these risks are eliminated</p>
+            <h2 class="section-title">Risks I'm not taking</h2>
+            <p class="section-subtitle">The ones a directional trader carries and I don't</p>
           </div>
         </div>
 
@@ -313,8 +307,8 @@ const store = useMetricsStore()
               </svg>
             </div>
             <div>
-              <h3 class="benefit-title">No Directional Market Risk</h3>
-              <p class="benefit-text">Price can go to $10k or $100k — the strategy doesn't care.</p>
+              <h3 class="benefit-title">No directional market risk</h3>
+              <p class="benefit-text">Price can go to $10k or $100k. The strategy doesn't care.</p>
             </div>
           </div>
 
@@ -325,7 +319,7 @@ const store = useMetricsStore()
               </svg>
             </div>
             <div>
-              <h3 class="benefit-title">No Timing Risk</h3>
+              <h3 class="benefit-title">No timing risk</h3>
               <p class="benefit-text">Not trying to predict market tops or bottoms.</p>
             </div>
           </div>
@@ -337,8 +331,8 @@ const store = useMetricsStore()
               </svg>
             </div>
             <div>
-              <h3 class="benefit-title">No Emotional Trading</h3>
-              <p class="benefit-text">Automated system removes FOMO and panic decisions.</p>
+              <h3 class="benefit-title">No emotional trading</h3>
+              <p class="benefit-text">The bot doesn't chase and it doesn't panic.</p>
             </div>
           </div>
 
@@ -349,8 +343,8 @@ const store = useMetricsStore()
               </svg>
             </div>
             <div>
-              <h3 class="benefit-title">No Leverage Amplification</h3>
-              <p class="benefit-text">Net exposure is zero; leverage is only for capital efficiency.</p>
+              <h3 class="benefit-title">No leverage amplification</h3>
+              <p class="benefit-text">Net exposure is zero. Leverage only buys capital efficiency.</p>
             </div>
           </div>
 
@@ -361,7 +355,7 @@ const store = useMetricsStore()
               </svg>
             </div>
             <div>
-              <h3 class="benefit-title">No Black Swan Price Exposure</h3>
+              <h3 class="benefit-title">No black swan price exposure</h3>
               <p class="benefit-text">A 50% crash doesn't mean 50% loss.</p>
             </div>
           </div>
@@ -373,8 +367,8 @@ const store = useMetricsStore()
               </svg>
             </div>
             <div>
-              <h3 class="benefit-title">No Short Squeeze Risk</h3>
-              <p class="benefit-text">Matched long position offsets short exposure.</p>
+              <h3 class="benefit-title">No short squeeze risk</h3>
+              <p class="benefit-text">The spot long covers the short.</p>
             </div>
           </div>
         </div>
@@ -391,59 +385,55 @@ const store = useMetricsStore()
             </svg>
           </div>
           <div>
-            <h2 class="section-title">Not Infinitely Scalable</h2>
+            <h2 class="section-title">Not infinitely scalable</h2>
             <p class="section-subtitle">More capital doesn't mean proportionally more returns</p>
           </div>
         </div>
 
         <div class="scalability-content">
           <div class="scalability-highlight">
-            <span class="scalability-icon">📉</span>
-            <p class="scalability-formula">More Capital = Lower Returns</p>
+            <p class="scalability-formula">More capital = lower returns</p>
           </div>
 
           <div class="scalability-grid">
             <div class="scalability-card">
-              <h3 class="scalability-title">Liquidity Constraints</h3>
+              <h3 class="scalability-title">Liquidity constraints</h3>
               <p class="scalability-text">
-                Each trading pair has limited depth. Larger positions mean worse entry/exit prices
-                due to slippage, and the best opportunities often exist in smaller, less liquid markets
-                that can't absorb large capital.
+                Each pair only has so much depth. Bigger positions get worse fills, and the best
+                funding is usually on smaller pairs that can't absorb much size.
               </p>
             </div>
 
             <div class="scalability-card">
-              <h3 class="scalability-title">Funding Rate Competition</h3>
+              <h3 class="scalability-title">Funding rate competition</h3>
               <p class="scalability-text">
-                High funding rates attract capital. As more traders pile into the same positions,
-                the funding rate normalizes downward. The strategy works best when few are doing it —
-                widespread adoption would compress returns for everyone.
+                High funding attracts capital. As more traders pile into the same side, the rate falls
+                back. This works best while few people are doing it. If everyone did it, the returns
+                would go away.
               </p>
             </div>
 
             <div class="scalability-card">
-              <h3 class="scalability-title">Opportunity Scarcity</h3>
+              <h3 class="scalability-title">Opportunity scarcity</h3>
               <p class="scalability-text">
-                Only a handful of coins have sufficiently high funding rates at any given time.
-                With more capital, you're forced to either concentrate risk in fewer positions
-                or accept lower-yielding opportunities.
+                Only a handful of coins pay well at any one time. More capital means either
+                concentrating into fewer positions or taking the ones that pay less.
               </p>
             </div>
 
             <div class="scalability-card">
-              <h3 class="scalability-title">Market Impact</h3>
+              <h3 class="scalability-title">Market impact</h3>
               <p class="scalability-text">
-                Large position entries and exits move prices. This creates adverse selection —
-                you buy at higher prices and sell at lower prices than smaller traders,
-                directly eating into your funding rate profits.
+                Big entries and exits move the price against you. You buy higher and sell lower
+                than a smaller trader would, and that comes straight out of the funding income.
               </p>
             </div>
           </div>
 
           <div class="scalability-note">
             <p>
-              <strong>Bottom line:</strong> This strategy has a natural ceiling. It works well at modest
-              scale but returns diminish significantly as capital grows.
+<strong>There is a ceiling.</strong> This works at modest size. Past that, each extra dollar earns
+less than the one before it.
             </p>
           </div>
         </div>
@@ -453,16 +443,16 @@ const store = useMetricsStore()
     <!-- Comparison Table -->
     <section class="section section-alt">
       <div class="container">
-        <h2 class="section-title center">Risk Comparison</h2>
+        <h2 class="section-title center">Risk comparison</h2>
         <p class="section-subtitle center">Delta-neutral vs. directional trading</p>
 
         <div class="table-wrapper">
           <table class="comparison-table">
             <thead>
               <tr>
-                <th>Risk Factor</th>
-                <th>Directional Trading</th>
-                <th>Delta-Neutral</th>
+                <th>Risk factor</th>
+                <th>Directional trading</th>
+                <th>Delta-neutral</th>
               </tr>
             </thead>
             <tbody>
@@ -501,9 +491,9 @@ const store = useMetricsStore()
     <section class="section section-alt">
       <div class="container center">
         <h2 class="section-title">Want to see the results?</h2>
-        <p class="section-subtitle">Check out the performance dashboard</p>
+        <p class="section-subtitle">The numbers are on the performance page</p>
         <router-link to="/performance" class="cta-button">
-          View Performance
+          View performance
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
