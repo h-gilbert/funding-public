@@ -1,16 +1,9 @@
 <script setup>
-import { onMounted } from 'vue'
-import { useMetricsStore } from '@/stores/metricsStore'
 import MetricsGrid from '@/components/metrics/MetricsGrid.vue'
 import DataIndicator from '@/components/metrics/DataIndicator.vue'
-import DataDelayNotice from '@/components/metrics/DataDelayNotice.vue'
+import SnapshotNotice from '@/components/metrics/SnapshotNotice.vue'
+import { asOfLabel } from '@/data/snapshot'
 
-const store = useMetricsStore()
-
-onMounted(() => {
-  store.fetchAll()
-  store.startPolling(60000)
-})
 </script>
 
 <template>
@@ -19,14 +12,14 @@ onMounted(() => {
     <section class="hero">
       <div class="container">
         <div class="hero-top">
-          <span class="label">Performance Dashboard</span>
+          <span class="label">Final snapshot</span>
           <DataIndicator />
         </div>
-        <h1 class="title">Performance metrics</h1>
+        <h1 class="title">Performance at retirement</h1>
         <p class="subtitle">
-          Performance data from real trading, published on a {{ store.lagAdjective }} delay.
+          The bot is retired. These are the final published figures, with no further updates.
         </p>
-        <DataDelayNotice class="hero-notice" />
+        <SnapshotNotice class="hero-notice" />
       </div>
     </section>
 
@@ -36,60 +29,8 @@ onMounted(() => {
         <h2 class="section-title">All metrics</h2>
         <MetricsGrid />
 
-        <div class="last-updated" v-if="store.lastUpdated">
-          Data as at {{ store.asOfLabel }} · fetched {{ new Date(store.lastUpdated).toLocaleTimeString() }}
-        </div>
-      </div>
-    </section>
-
-    <!-- Monthly Breakdown -->
-    <section class="section" v-if="store.showsAggregates">
-      <div class="container">
-        <h2 class="section-title">Monthly returns</h2>
-        <p class="section-subtitle">Return and positions closed for each month</p>
-
-        <!-- YTD Summary -->
-        <div class="ytd-card" v-if="store.monthly?.ytd">
-          <div class="ytd-header">
-            <span class="ytd-label">Year to date</span>
-            <span class="ytd-year">{{ new Date().getFullYear() }}</span>
-          </div>
-          <div class="ytd-stats">
-            <div class="ytd-stat">
-              <span class="ytd-stat-value" :class="{ positive: store.monthly.ytd.returnPct >= 0, negative: store.monthly.ytd.returnPct < 0 }">
-                {{ store.monthly.ytd.returnPct >= 0 ? '+' : '' }}{{ store.monthly.ytd.returnPct?.toFixed(2) || 0 }}%
-              </span>
-              <span class="ytd-stat-label">Return</span>
-            </div>
-            <div class="ytd-stat">
-              <span class="ytd-stat-value neutral">{{ store.monthly.ytd.positionsClosed || 0 }}</span>
-              <span class="ytd-stat-label">Positions</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="monthly-grid" v-if="store.monthly?.months?.length">
-          <div
-            v-for="month in store.monthly.months"
-            :key="month.month"
-            class="month-card"
-          >
-            <div class="month-name">{{ formatMonth(month.month) }}</div>
-            <div
-              class="month-return"
-              :class="{ positive: month.returnPct >= 0, negative: month.returnPct < 0 }"
-              title="Total return for this month (not annualized)"
-            >
-              {{ month.returnPct >= 0 ? '+' : '' }}{{ month.returnPct?.toFixed(2) || 0 }}%
-            </div>
-            <div class="month-stats" v-if="month.positionsClosed > 0">
-              <span>{{ month.positionsClosed }} positions</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="empty-state" v-else>
-          <p>No monthly data available yet</p>
+        <div class="last-updated">
+          Final snapshot as at {{ asOfLabel }}
         </div>
       </div>
     </section>
@@ -104,26 +45,13 @@ onMounted(() => {
             <circle cx="8" cy="5" r="0.75" fill="currentColor"/>
           </svg>
           <p>
-            Past performance does not guarantee future results · All metrics from real trading data · Published on a {{ store.lagAdjective }} delay
+            Past performance does not guarantee future results · All metrics from real trading data · Bot retired. Figures frozen at the final snapshot
           </p>
         </div>
       </div>
     </section>
   </div>
 </template>
-
-<script>
-export default {
-  methods: {
-    formatMonth(monthStr) {
-      if (!monthStr) return ''
-      const [year, month] = monthStr.split('-')
-      const date = new Date(year, parseInt(month) - 1)
-      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-    }
-  }
-}
-</script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
@@ -154,6 +82,7 @@ export default {
 
 .hero-top {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;

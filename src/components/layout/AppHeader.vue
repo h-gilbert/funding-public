@@ -6,8 +6,8 @@ const route = useRoute()
 const mobileMenuOpen = ref(false)
 
 const navLinks = [
-  { name: 'Home', path: '/' },
-  { name: 'Performance', path: '/performance' },
+  { name: 'Archive', path: '/' },
+  { name: 'Final snapshot', path: '/performance' },
   { name: 'Strategy', path: '/strategy' }
 ]
 

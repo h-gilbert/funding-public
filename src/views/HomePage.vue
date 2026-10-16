@@ -1,16 +1,8 @@
 <script setup>
-import { onMounted } from 'vue'
-import { useMetricsStore } from '@/stores/metricsStore'
 import DataIndicator from '@/components/metrics/DataIndicator.vue'
-import DataDelayNotice from '@/components/metrics/DataDelayNotice.vue'
+import SnapshotNotice from '@/components/metrics/SnapshotNotice.vue'
 import MetricsGrid from '@/components/metrics/MetricsGrid.vue'
 
-const store = useMetricsStore()
-
-onMounted(() => {
-  store.fetchAll()
-  store.startPolling(60000)
-})
 </script>
 
 <template>
@@ -28,13 +20,13 @@ onMounted(() => {
         </h1>
 
         <p class="hero-subtitle">
-          A bot holds offsetting spot and futures positions and collects the funding paid in between.
-          <span class="highlight">Targeting &gt;10% APY</span> with no bet on price direction.
+          This bot has been retired and the project is archived.
+          The figures below are its final published snapshot, preserved for reference.
         </p>
 
         <div class="hero-cta">
           <router-link to="/performance" class="cta-primary">
-            <span>View performance</span>
+            <span>View final snapshot</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -53,13 +45,13 @@ onMounted(() => {
     <section class="metrics-section">
       <div class="section-container">
         <div class="section-header">
-          <span class="section-label">Published Metrics</span>
-          <h2 class="section-title">Performance so far</h2>
+          <span class="section-label">Final snapshot</span>
+          <h2 class="section-title">Performance at retirement</h2>
         </div>
 
         <MetricsGrid compact />
 
-        <DataDelayNotice class="metrics-notice" variant="inline" />
+        <SnapshotNotice class="metrics-notice" variant="inline" />
       </div>
     </section>
 
@@ -72,7 +64,7 @@ onMounted(() => {
             <h2 class="section-title">What delta-neutral means</h2>
             <p class="overview-text">
               Delta-neutral trading cancels out price risk by holding two opposite positions.
-              I buy the asset <strong>long on spot</strong> at one exchange and sell the same size
+              The bot bought the asset <strong>long on spot</strong> at one exchange and sold the same size
               <strong>short on perpetual futures</strong> at another.
             </p>
             <p class="overview-text">
@@ -123,12 +115,12 @@ onMounted(() => {
         <div class="cta-card">
           <h2 class="cta-title">Want the detail?</h2>
           <p class="cta-text">
-            The performance page has the numbers. The strategy page has the risks,
+            The performance page preserves the final numbers. The strategy page has the risks,
             including the ones that could take the lot.
           </p>
           <div class="cta-buttons">
             <router-link to="/performance" class="cta-primary">
-              <span>Performance dashboard</span>
+              <span>Final performance snapshot</span>
             </router-link>
           </div>
         </div>

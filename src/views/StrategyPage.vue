@@ -1,9 +1,5 @@
 <script setup>
 import LeverageApyChart from '@/components/strategy/LeverageApyChart.vue'
-import ReturnsBreakdown from '@/components/strategy/ReturnsBreakdown.vue'
-import { useMetricsStore } from '@/stores/metricsStore'
-
-const store = useMetricsStore()
 </script>
 
 <template>
@@ -11,10 +7,10 @@ const store = useMetricsStore()
     <!-- Hero -->
     <section class="hero">
       <div class="container">
-        <span class="label">The Strategy</span>
+        <span class="label">Archived strategy</span>
         <h1 class="title">How delta-neutral works</h1>
         <p class="subtitle">
-          How the positions work, what they pay, and what can go wrong.
+          Historical documentation of the archived project. No bot data is fetched or published.
         </p>
       </div>
     </section>
@@ -28,7 +24,7 @@ const store = useMetricsStore()
               <path d="M16 4L20 12L28 13.5L22 19.5L23.5 28L16 24L8.5 28L10 19.5L4 13.5L12 12L16 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
-          <h2 class="highlight-title">Target: over 10% a year</h2>
+          <h2 class="highlight-title">Original target: over 10% a year</h2>
           <p class="highlight-text">
             The returns come from funding payments, not from guessing where the price goes. How much is
             on offer depends on the market and on which exchanges are paying at the time.
@@ -81,17 +77,6 @@ const store = useMetricsStore()
             </p>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Returns Breakdown -->
-    <section class="section" v-if="store.showsAggregates">
-      <div class="container">
-        <h2 class="section-title center">Return sources</h2>
-        <p class="section-subtitle center">
-          Funding income, basis moves and fees, split out
-        </p>
-        <ReturnsBreakdown />
       </div>
     </section>
 
@@ -165,7 +150,7 @@ business model here.
                 <h4 class="point-title">Basis volatility</h4>
                 <p class="point-text">
                   Basis moves with sentiment and can swing hard in a fast market. Even with both legs on,
-                  that shows up as unrealised P&L bouncing around. It is noise. I track basis apart from
+                  that shows up as unrealised P&L bouncing around. The project tracked basis apart from
                   funding income so the funding number is not buried in it.
                 </p>
               </div>
@@ -213,7 +198,7 @@ normal volatility.
             </svg>
           </div>
           <div>
-            <h2 class="section-title">Risks I am taking</h2>
+            <h2 class="section-title">Risks of the strategy</h2>
             <p class="section-subtitle">Every one of these can cost real money</p>
           </div>
         </div>
@@ -277,7 +262,7 @@ Exchanges change fees and margin requirements, and sometimes delist a pair, with
           <div class="risk-card">
             <h3 class="risk-title">Operational risk</h3>
             <p class="risk-text">
-Servers go down, networks drop, and some situations need me to step in by hand.
+Servers can go down, networks can drop, and some situations require manual intervention.
             </p>
           </div>
         </div>
@@ -294,8 +279,8 @@ Servers go down, networks drop, and some situations need me to step in by hand.
             </svg>
           </div>
           <div>
-            <h2 class="section-title">Risks I'm not taking</h2>
-            <p class="section-subtitle">The ones a directional trader carries and I don't</p>
+            <h2 class="section-title">Risks the hedge aimed to reduce</h2>
+            <p class="section-subtitle">How offsetting positions differ from a directional trade</p>
           </div>
         </div>
 
@@ -490,10 +475,10 @@ less than the one before it.
     <!-- CTA -->
     <section class="section section-alt">
       <div class="container center">
-        <h2 class="section-title">Want to see the results?</h2>
-        <p class="section-subtitle">The numbers are on the performance page</p>
-        <router-link to="/performance" class="cta-button">
-          View performance
+        <h2 class="section-title">Project archived</h2>
+        <p class="section-subtitle">The bot is retired. Its final published snapshot is preserved.</p>
+        <router-link to="/" class="cta-button">
+          Back to the archive
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>

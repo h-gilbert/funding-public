@@ -59,6 +59,7 @@
   }
 
   .info-icon[data-tooltip]::after {
+    display: none;
     content: attr(data-tooltip);
     position: absolute;
     left: 50%;
@@ -85,6 +86,7 @@
   }
 
   .info-icon[data-tooltip]::before {
+    display: none;
     content: '';
     position: absolute;
     left: 50%;
@@ -100,6 +102,7 @@
 
   .info-icon[data-tooltip]:hover::after,
   .info-icon[data-tooltip]:hover::before {
+    display: block;
     opacity: 1;
     visibility: visible;
   }

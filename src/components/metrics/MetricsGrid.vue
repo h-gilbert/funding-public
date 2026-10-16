@@ -1,8 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import MetricCard from './MetricCard.vue'
-import { useMetrics } from '@/composables/useMetrics'
-import { WITHHELD_WHILE_LAGGED } from '@/services/metricsService'
+import { overview } from '@/data/snapshot'
 
 const props = defineProps({
   compact: {
@@ -11,16 +10,18 @@ const props = defineProps({
   }
 })
 
-const { overview, loading } = useMetrics({ autoFetch: false })
+const loading = false
 
-// Cards whose underlying field can't be reported as at the cutoff are dropped
-// rather than filled with a live value.
-const isWithheld = (field) => WITHHELD_WHILE_LAGGED.includes(field)
+// Keep fields that were withheld from the final public snapshot hidden.
+const isWithheld = (field) => {
+  const [group, key] = field.split('.')
+  return overview[group]?.[key] == null
+}
 
 const metrics = computed(() => {
-  if (!overview.value) return []
+  if (!overview) return []
 
-  const { performance, risk, efficiency, activity } = overview.value
+  const { performance, risk, efficiency, activity } = overview
 
   const tooltips = {
     apy30d: 'Annualized percentage yield based on the last 30 days of returns',
@@ -32,7 +33,7 @@ const metrics = computed(() => {
     volatility: 'Standard deviation of daily returns over the past 30 days, annualized',
     capitalUtilization: 'Percentage of available capital deployed in positions',
     openPositions: 'Number of trading positions open',
-    daysRunning: 'Total number of days the strategy has been active'
+    daysRunning: 'Number of days active at the final snapshot'
   }
 
   if (props.compact) {
@@ -40,7 +41,7 @@ const metrics = computed(() => {
     return [
       { field: 'performance.apy30d', label: '30-Day APY', value: performance?.apy30d, format: 'percent', tooltip: tooltips.apy30d },
       { field: 'performance.cumulativeReturnPct', label: 'Total Return', value: performance?.cumulativeReturnPct, format: 'percent', tooltip: tooltips.totalReturn },
-      { field: 'activity.daysRunning', label: 'Days Running', value: activity?.daysRunning, format: 'days', tooltip: tooltips.daysRunning }
+      { field: 'activity.daysRunning', label: 'Days Active', value: activity?.daysRunning, format: 'days', tooltip: tooltips.daysRunning }
     ].filter(m => !isWithheld(m.field))
   }
 
@@ -54,7 +55,7 @@ const metrics = computed(() => {
     { field: 'risk.volatility30d', label: 'Volatility (30d)', value: risk?.volatility30d, format: 'percent', showSign: false, tooltip: tooltips.volatility },
     { field: 'efficiency.capitalUtilizationPct', label: 'Capital Utilization', value: efficiency?.capitalUtilizationPct, format: 'percent', showSign: false, tooltip: tooltips.capitalUtilization },
     { field: 'activity.openPositionsCount', label: 'Open Positions', value: activity?.openPositionsCount, format: 'number', tooltip: tooltips.openPositions },
-    { field: 'activity.daysRunning', label: 'Days Running', value: activity?.daysRunning, format: 'days', tooltip: tooltips.daysRunning }
+    { field: 'activity.daysRunning', label: 'Days Active', value: activity?.daysRunning, format: 'days', tooltip: tooltips.daysRunning }
   ].filter(m => !isWithheld(m.field))
 })
 </script>

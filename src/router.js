@@ -6,8 +6,8 @@ const routes = [
     name: 'Home',
     component: () => import('@/views/HomePage.vue'),
     meta: {
-      title: 'Delta-Neutral Funding Strategy',
-      description: 'Automated delta-neutral funding rate strategy. Performance published on a 7-day delay.'
+      title: 'Archived | Delta-Neutral Funding Strategy',
+      description: 'Archived funding rate arbitrage project. The bot is retired. Its final published snapshot is preserved with no live data connection.'
     }
   },
   {
@@ -15,8 +15,8 @@ const routes = [
     name: 'Performance',
     component: () => import('@/views/PerformancePage.vue'),
     meta: {
-      title: 'Performance | Delta-Neutral Strategy',
-      description: 'APY, total return, drawdown and historical charts, published on a 7-day delay.'
+      title: 'Final snapshot | Retired Delta-Neutral Bot',
+      description: 'Final published performance snapshot of the retired delta-neutral funding bot. Figures no longer update.'
     }
   },
   {
@@ -24,7 +24,7 @@ const routes = [
     name: 'Strategy',
     component: () => import('@/views/StrategyPage.vue'),
     meta: {
-      title: 'How it works | Delta-Neutral Strategy',
+      title: 'Archived strategy | Delta-Neutral Strategy',
       description: 'How delta-neutral funding rate capture works, and what can go wrong.'
     }
   },

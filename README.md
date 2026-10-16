@@ -1,47 +1,38 @@
-# Funding Strategy Showcase
+# Delta-neutral funding strategy archive
 
-A public-facing Vue.js website showcasing delta-neutral trading strategy performance metrics.
+This project has been archived. The bot is retired. The website preserves its final published snapshot and
+no longer connects to the bot. The strategy write-up
+is retained as historical documentation.
 
-## Tech Stack
+## Development
 
-- **Frontend**: Vue 3, Vite, Pinia, Vue Router
-- **Styling**: Tailwind CSS
-- **Fonts**: Inter, SF Mono, Instrument Serif
+The archive is a static Vue 3 site built with Vite and Tailwind CSS.
+It needs no backend, API credentials, or bot connection.
 
-## Getting Started
-
-```bash
-# Install dependencies
-npm install
-
-# Start dev server (runs on port 5180)
+```sh
+npm ci
 npm run dev
-
-# Build for production
 npm run build
 ```
 
-## Configuration
+The development server runs on port 5180. The `/performance` route
+shows the frozen final snapshot. Both the frontend container and the public
+nginx configuration return HTTP 410 for the former `/api` routes, including
+requests from older browser tabs.
 
-The frontend expects a backend API. In development, requests to `/api` are proxied to `localhost:3400`.
+## Final snapshot
 
-For production, set the environment variable:
-```
-VITE_API_URL=https://your-api-domain.com
-```
+`src/data/final-snapshot.json` is the fixed dataset captured at retirement.
+It preserves the existing seven-day publication delay. Its cutoff and capture
+dates are recorded in the file. Values that were withheld from the public site
+remain withheld. The figures and their as-of date never advance with the clock.
+There is no API client, polling, or automated refresh job.
 
-See `.env.example` for all supported variables.
+## Deployment
 
-## Data lag
-
-The site publishes figures on a deliberate delay (7 days by default) so that
-unsettled exchange data is never shown while it is still moving. Configure it
-with `VITE_DATA_LAG_DAYS`; set it to `0` to publish live.
-
-Some sections are hidden while the delay is applied client-side, because the
-backend cannot yet replay them as at a past date. See
-[docs/data-lag.md](docs/data-lag.md) for what is covered, what is withheld, and
-the `?asOf=` support the backend needs to restore them.
+Pushing to `main` builds the static site and deploys the frontend container and
+public nginx configuration through GitHub Actions. This does not deploy or
+change the underlying bot.
 
 ## License
 
